@@ -103,19 +103,37 @@ Activated on-demand via semantic matching. Each skill has `SKILL.md` with YAML f
 6. **`ck-help.md`** → Skipped (ClaudeKit-specific, not applicable)
 7. **`template-skill/`** → Skipped (template only, not a real skill)
 
+## Installation
+
+Install all skill dependencies (Python packages, Node.js modules, system tools):
+
+```bash
+bash .agent/skills/install.sh        # Interactive
+bash .agent/skills/install.sh -y     # Auto-confirm
+bash .agent/skills/install.sh --with-sudo  # Include system packages (Linux)
+```
+
+To use the Python virtual environment manually:
+```bash
+source .agent/skills/.venv/bin/activate
+```
+
 ## Conversion Stats
 
 | Category | Count |
 |---|---|
 | Rules | 4 |
 | Workflows | 17 |
-| Skills | 31 |
-| Reference files | 12 |
-| **Total files** | **65** |
+| Skills (SKILL.md) | 31 |
+| Skill references/scripts/data/assets | 364 |
+| Install script | 1 |
+| Config files (.env.example, package.json, etc.) | 2 |
+| **Total files** | **419** |
 
 ## Usage
 
 1. Open the project in Google Antigravity IDE
-2. Rules are loaded automatically
-3. Use `/plan`, `/cook`, `/code`, `/fix`, `/test`, `/debug`, `/scout`, `/watzup`, `/ask`, `/brainstorm`, `/bootstrap`, `/journal`, `/preview`, `/kanban` workflows
-4. Skills activate automatically when relevant tasks are detected
+2. Run `bash .agent/skills/install.sh -y` to install dependencies
+3. Rules are loaded automatically
+4. Use `/plan`, `/cook`, `/code`, `/fix`, `/test`, `/debug`, `/scout`, `/watzup`, `/ask`, `/brainstorm`, `/bootstrap`, `/journal`, `/preview`, `/kanban` workflows
+5. Skills activate automatically when relevant tasks are detected
