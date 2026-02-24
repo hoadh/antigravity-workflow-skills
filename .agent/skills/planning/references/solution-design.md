@@ -3,9 +3,9 @@
 ## Core Principles
 
 Follow these fundamental principles:
-- **YAGNI** (You Aren't Gonna Need It) — Don't add functionality until necessary
-- **KISS** (Keep It Simple, Stupid) — Prefer simple solutions over complex ones
-- **DRY** (Don't Repeat Yourself) — Avoid code duplication
+- **YAGNI** (You Aren't Gonna Need It) - Don't add functionality until necessary
+- **KISS** (Keep It Simple, Stupid) - Prefer simple solutions over complex ones
+- **DRY** (Don't Repeat Yourself) - Avoid code duplication
 
 ## Design Activities
 

@@ -2,6 +2,10 @@
 
 ## Plan File Format
 
+**Important:**
+- DO NOT create plans or reports in USER directory.
+- ALWAYS create plans or reports in CURRENT WORKING PROJECT DIRECTORY.
+
 ### YAML Frontmatter (Required for plan.md)
 
 All `plan.md` files MUST include YAML frontmatter at the top:
@@ -13,6 +17,8 @@ description: "{One-sentence summary for card preview}"
 status: pending  # pending | in-progress | completed | cancelled
 priority: P2     # P1 (High) | P2 (Medium) | P3 (Low)
 effort: 4h       # Estimated total effort
+issue: 74        # GitHub issue number (if applicable)
+branch: kai/feat/feature-name
 tags: [frontend, api]  # Category tags
 created: 2025-12-16
 ---
@@ -26,6 +32,8 @@ When creating plans, auto-populate these fields:
 - **status**: Always `pending` for new plans
 - **priority**: From user request or default `P2`
 - **effort**: Sum of phase estimates
+- **issue**: Parse from branch name or context
+- **branch**: Current git branch (`git branch --show-current`)
 - **tags**: Infer from task keywords (e.g., frontend, backend, api, auth)
 - **created**: Today's date in YYYY-MM-DD format
 
@@ -46,17 +54,22 @@ Use these predefined tags for consistency:
 - Provide clear acceptance criteria per task
 
 ### File Management
+
+**Important:**
+- DO NOT create plans or reports in USER directory.
+- ALWAYS create plans or reports in CURRENT WORKING PROJECT DIRECTORY.
+
 List affected files with:
 - Full paths (not relative)
 - Action type (modify/create/delete)
 - Brief change description
 - Dependencies on other changes
-- Follow the `./docs/development-rules.md` file
+- Fully respect the `./docs/development-rules.md` file.
 
 ## Workflow Process
 
 1. **Initial Analysis** → Read docs, understand context
-2. **Research Phase** → Investigate approaches in parallel
+2. **Research Phase** → Spawn researchers in parallel, investigate approaches
 3. **Synthesis** → Analyze reports, identify optimal solution
 4. **Design Phase** → Create architecture, implementation design
 5. **Plan Documentation** → Write comprehensive plan in Markdown
@@ -64,16 +77,20 @@ List affected files with:
 
 ## Output Requirements
 
+**Important:**
+- DO NOT create plans or reports in USER directory.
+- ALWAYS create plans or reports in CURRENT WORKING PROJECT DIRECTORY.
+
 ### What Planners Do
 - Create plans ONLY (no implementation)
 - Provide plan file path and summary
 - Self-contained plans with necessary context
 - Code snippets/pseudocode when clarifying
 - Multiple options with trade-offs when appropriate
-- Follow the `./docs/development-rules.md` file
+- Fully respect the `./docs/development-rules.md` file.
 
 ### Writing Style
-**Sacrifice grammar for concision**
+**IMPORTANT:** Sacrifice grammar for concision
 - Focus clarity over eloquence
 - Use bullets and lists
 - Short sentences
@@ -81,11 +98,12 @@ List affected files with:
 - Prioritize actionable info
 
 ### Unresolved Questions
-**List unresolved questions at end**
+**IMPORTANT:** Use `AskUserQuestion` to ask users for unresolved questions at the end
 - Questions needing clarification
 - Technical decisions requiring input
 - Unknowns impacting implementation
 - Trade-offs requiring business decisions
+Revise the plan and phases based on the answers.
 
 ## Quality Standards
 
@@ -100,7 +118,7 @@ List affected files with:
 - Design for future modifications
 - Document decision rationale
 - Avoid over-engineering
-- Follow the `./docs/development-rules.md` file
+- Fully respect the `./docs/development-rules.md` file.
 
 ### Research Depth
 - When uncertain, research more

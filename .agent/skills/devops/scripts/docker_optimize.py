@@ -18,8 +18,9 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-# Windows UTF-8 compatibility
-sys.path.insert(0, str(Path.home() / '.agent' / 'scripts'))
+# Windows UTF-8 compatibility (works for both local and global installs)
+CLAUDE_ROOT = Path(__file__).parent.parent.parent.parent
+sys.path.insert(0, str(CLAUDE_ROOT / 'scripts'))
 try:
     from win_compat import ensure_utf8_stdout
     ensure_utf8_stdout()

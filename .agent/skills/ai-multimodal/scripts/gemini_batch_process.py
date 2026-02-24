@@ -23,8 +23,9 @@ from typing import List, Dict, Any, Optional
 import csv
 import shutil
 
-# Import centralized environment resolver
-sys.path.insert(0, str(Path.home() / '.agent' / 'scripts'))
+# Import centralized environment resolver (works for both local and global installs)
+CLAUDE_ROOT = Path(__file__).parent.parent.parent.parent
+sys.path.insert(0, str(CLAUDE_ROOT / 'scripts'))
 try:
     from resolve_env import resolve_env
     CENTRALIZED_RESOLVER_AVAILABLE = True
@@ -37,7 +38,6 @@ except ImportError:
         load_dotenv = None
 
 # Import key rotation support
-# Import key rotation from sibling common module (if available)
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'common'))
 try:
     from api_key_rotator import KeyRotator, is_rate_limit_error
@@ -100,10 +100,10 @@ def find_api_key() -> Optional[str]:
         script_dir = Path(__file__).parent
         skill_dir = script_dir.parent
         skills_dir = skill_dir.parent
-        claude_dir = skills_dir.parent
+        agent_dir = skills_dir.parent
 
         env_files = [
-            claude_dir / '.env',
+            agent_dir / '.env',
             skills_dir / '.env',
             skill_dir / '.env',
         ]

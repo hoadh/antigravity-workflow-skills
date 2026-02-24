@@ -22,6 +22,11 @@
   <link rel="stylesheet" href="/assets/novel-theme.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" id="hljs-light">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" id="hljs-dark" disabled>
+  <!-- Mermaid.js for diagram rendering -->
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    window.mermaidModule = mermaid;
+  </script>
 </head>
 <body class="{{has-plan}}">
   <header class="reader-header">
@@ -55,8 +60,13 @@
     </div>
   </header>
 
+  <div class="progress-bar-container" id="progress-bar">
+    <div class="progress-bar-fill"></div>
+  </div>
+
   <div class="layout">
     <aside class="sidebar" id="sidebar">
+      <div class="sidebar-resize-handle" id="sidebar-resize"></div>
       {{nav-sidebar}}
       <div class="toc-section">
         <div class="toc-title">Contents</div>
@@ -70,6 +80,65 @@
       </article>
       {{nav-footer}}
     </main>
+  </div>
+
+  <!-- Keyboard shortcuts toast -->
+  <div class="shortcuts-toast" id="shortcuts-toast" role="status" aria-live="polite">
+    <span>Press <kbd>?</kbd> for keyboard shortcuts</span>
+    <button class="toast-dismiss" aria-label="Dismiss">&times;</button>
+  </div>
+
+  <!-- Keyboard shortcuts cheatsheet -->
+  <div class="shortcuts-overlay" id="shortcuts-overlay" role="dialog" aria-modal="true" aria-labelledby="shortcuts-title" hidden>
+    <div class="shortcuts-backdrop"></div>
+    <div class="shortcuts-modal">
+      <header>
+        <h2 id="shortcuts-title">Keyboard Shortcuts</h2>
+        <button class="modal-close" aria-label="Close">&times;</button>
+      </header>
+      <table class="shortcuts-table">
+        <tbody>
+          <tr><td><kbd>T</kbd></td><td>Toggle theme (light/dark)</td></tr>
+          <tr><td><kbd>S</kbd></td><td>Toggle sidebar</td></tr>
+          <tr><td><kbd>←</kbd></td><td>Previous page</td></tr>
+          <tr><td><kbd>→</kbd></td><td>Next page</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>Close sidebar / modal</td></tr>
+          <tr><td><kbd>?</kbd></td><td>Show this help</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Mobile FAB group -->
+  <div class="fab-group" id="fab-group" aria-label="Quick navigation">
+    <button class="fab fab-menu" id="fab-menu" aria-label="Open navigation menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 12h18M3 6h18M3 18h18"/>
+      </svg>
+    </button>
+    <a class="fab fab-next nav-next-mobile" aria-label="Next page">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 18l6-6-6-6"/>
+      </svg>
+    </a>
+    <a class="fab fab-prev nav-prev-mobile" aria-label="Previous page">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </a>
+  </div>
+
+  <!-- Mobile bottom sheet -->
+  <div class="bottom-sheet" id="bottom-sheet" aria-hidden="true">
+    <div class="bottom-sheet-backdrop"></div>
+    <div class="bottom-sheet-container">
+      <div class="bottom-sheet-handle" aria-label="Drag to close">
+        <span class="handle-bar"></span>
+      </div>
+      <div class="bottom-sheet-content" id="bottom-sheet-content">
+        <!-- Sidebar content cloned here via JS -->
+      </div>
+    </div>
   </div>
 
   <script>

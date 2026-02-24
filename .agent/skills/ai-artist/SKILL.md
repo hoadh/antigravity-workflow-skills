@@ -1,54 +1,121 @@
 ---
 name: ai-artist
-description: Write and optimize prompts for AI-generated outcomes across text and image models. Use when crafting prompts for LLMs, image generators (Midjourney, DALL-E, Stable Diffusion, Imagen, Flux), or video generators (Veo, Runway). Covers prompt structure, style keywords, negative prompts, chain-of-thought, few-shot examples, iterative refinement, and domain-specific patterns.
+description: "Generate images via Nano Banana with 129 curated prompts. Mandatory validation interview refines style/mood/colors (use --skip to bypass). 3 modes: search, creative, wild. Styles: Ukiyo-e, Bento grid, cyberpunk, cinematic, vintage patent."
+version: 3.1.0
+license: MIT
 ---
 
-# AI Artist - Prompt Engineering
+# AI Artist - Nano Banana Image Generation
 
-Craft effective prompts for AI text and image generation models.
+Generate images using 129 curated prompts from awesome-nano-banana-pro-prompts collection.
 
-## Core Principles
+**Validation interview is mandatory** (use `--skip` to bypass).
 
-1. **Clarity** - Be specific, avoid ambiguity
-2. **Context** - Set scene, role, constraints upfront
-3. **Structure** - Use consistent formatting (markdown, XML tags, delimiters)
-4. **Iteration** - Refine based on outputs, A/B test variations
+## Workflow
 
-## Quick Patterns
+**IMPORTANT:** Follow `references/validation-workflow.md` when this skill is activated.
 
-### LLM Prompts
+## Quick Start
 
-```
-[Role] You are a {expert type} specializing in {domain}.
-[Context] {Background information and constraints}
-[Task] {Specific action to perform}
-[Format] {Output structure - JSON, markdown, list, etc.}
-[Examples] {1-3 few-shot examples if needed}
+```bash
+python3 scripts/generate.py "<concept>" -o <output.png> [--mode MODE]
 ```
 
-### Image Generation
+### Generation Modes
 
+| Mode | Description |
+|------|-------------|
+| `search` | Find best matching prompt from 129 curated prompts (default) |
+| `creative` | Remix elements from top 3 matching prompts |
+| `wild` | Out-of-the-box creative interpretation (random style transform) |
+| `all` | Generate all 3 variations |
+
+### Examples
+
+```bash
+# Default search mode
+python3 scripts/generate.py "tech conference banner" -o banner.png -ar 16:9
+
+# Creative remix (combines multiple prompts)
+python3 scripts/generate.py "AI workshop" -o workshop.png --mode creative
+
+# Wild/experimental (random artistic transformation)
+python3 scripts/generate.py "product showcase" -o product.png --mode wild
+
+# Generate all 3 variations at once
+python3 scripts/generate.py "futuristic city" -o city.png --mode all -v
 ```
-[Subject] {main subject with details}
-[Style] {artistic style, medium, artist reference}
-[Composition] {framing, angle, lighting}
-[Quality] {resolution modifiers, rendering quality}
-[Negative] {what to avoid - only if supported}
+
+### Options
+
+| Flag | Description |
+|------|-------------|
+| `-o, --output` | Output path (required) |
+| `-m, --mode` | search, creative, wild, or all |
+| `-ar, --aspect-ratio` | 1:1, 16:9, 9:16, etc. |
+| `--model` | flash (fast) or pro (quality/4K) |
+| `-v, --verbose` | Show matched prompts and details |
+| `--dry-run` | Show prompt without generating |
+| `--skip` | Bypass validation interview |
+
+---
+
+## Prompt Database
+
+**129 curated prompts** extracted from awesome-nano-banana-pro-prompts:
+
+```bash
+# Search prompts
+python3 scripts/search.py "<query>" --domain awesome
+
+# View all prompts
+cat data/awesome-prompts.csv
 ```
+
+### Categories include:
+- **Profile/Avatar**: Thought-leader headshots, mirror selfies
+- **Infographics**: Bento grid, chalkboard, ingredient labels
+- **Social Media**: Quote cards, banners, thumbnails
+- **Product**: Commercial shots, e-commerce, Apple-style
+- **Artistic**: Ukiyo-e, patent documents, vaporwave, cyberpunk
+- **Character**: Anime, chibi, comic storyboards
+
+---
+
+## Wild Mode Transformations
+
+The `wild` mode randomly applies one of these artistic transformations:
+
+- Japanese Ukiyo-e woodblock print
+- Premium liquid glass Bento grid infographic
+- Vintage 1800s patent document
+- Surreal dreamscape with volumetric god rays
+- Cyberpunk neon aesthetic with holograms
+- Hand-drawn chalkboard explanation
+- Isometric 3D diorama
+- Cinematic movie poster
+- Vaporwave aesthetic with glitch effects
+- Apple-style product showcase
+
+---
 
 ## References
 
 | Topic | File |
 |-------|------|
-| LLM | `references/llm-prompting.md` |
-| Image | `references/image-prompting.md` |
-| Advanced | `references/advanced-techniques.md` |
-| Domain Index | `references/domain-patterns.md` |
+| **Validation Workflow** | `references/validation-workflow.md` |
+| All Prompts | `data/awesome-prompts.csv` |
+| Nano Banana Guide | `references/nano-banana.md` |
+| Image Prompting | `references/image-prompting.md` |
+| Source | `references/awesome-nano-banana-pro-prompts.md` |
 
-## Anti-Patterns
+---
 
-- Vague instructions ("make it better")
-- Conflicting constraints
-- Missing context for domain tasks
-- Over-prompting with redundant details
-- Ignoring model-specific strengths/limits
+## Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `generate.py` | Main image generation with 3 modes |
+| `search.py` | Search prompts database |
+| `extract_prompts.py` | Extract prompts from markdown |
+| `core.py` | BM25 search engine |

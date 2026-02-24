@@ -127,6 +127,7 @@ async function snapshot() {
     } else {
       await disconnectBrowser();
     }
+    process.exit(0);
   } catch (error) {
     outputError(error);
   }

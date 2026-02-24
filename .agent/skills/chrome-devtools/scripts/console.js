@@ -71,8 +71,10 @@ async function monitorConsole() {
     } else {
       await disconnectBrowser();
     }
+    process.exit(0);
   } catch (error) {
     outputError(error);
+    process.exit(1);
   }
 }
 

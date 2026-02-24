@@ -178,7 +178,7 @@ Install with `npx`:
 
 ## Integration with mcp-manager Agent
 
-The `mcp-manager` agent (skills and workflows) uses this skill to:
+The `mcp-manager` agent (`.agent/agents/mcp-manager.md`) uses this skill to:
 
 1. **Discover**: Connect to MCP servers, list capabilities
 2. **Analyze**: Filter relevant tools for tasks

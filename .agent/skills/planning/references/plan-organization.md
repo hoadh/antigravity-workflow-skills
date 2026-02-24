@@ -3,14 +3,20 @@
 ## Directory Structure
 
 ### Plan Location
-Save plans in `./plans` directory with timestamp and descriptive name.
 
-**Example:** `plans/251101-1505-authentication/`
+**Important:**
+- DO NOT create plans or reports in USER directory.
+- ALWAYS create plans or reports in CURRENT WORKING PROJECT DIRECTORY.
+
+Use `Plan dir:` from `## Naming` section injected by hooks. This is the full computed path.
+
+**Example:** `plans/251101-1505-authentication/` or `ai_docs/feature/MRR-1453/`
 
 ### File Organization
 
+IN CURRENT WORKING PROJECT DIRECTORY:
 ```
-{plan-dir}/
+{plan-dir}/                                    # From `Plan dir:` in ## Naming
 ├── research/
 │   ├── researcher-XX-report.md
 │   └── ...
@@ -28,7 +34,34 @@ Save plans in `./plans` directory with timestamp and descriptive name.
 └── phase-07-write-tests.md                    # Tests
 ```
 
+### Active Plan State Tracking
+
+Check the `## Plan Context` section injected by hooks:
+- **"Plan: {path}"** = Active plan - use for reports
+- **"Suggested: {path}"** = Branch-matched, hint only - do NOT auto-use
+- **"Plan: none"** = No active plan
+
+**Pre-Creation Check:**
+1. If "Plan:" shows a path → ask "Continue with existing plan? [Y/n]"
+2. If "Suggested:" shows a path → inform user (hint only, do NOT auto-use)
+3. If "Plan: none" → create new plan using naming from `## Naming` section
+
+**After Creating Plan:**
+```bash
+# Update session state so subagents get the new plan context:
+node .agent/scripts/set-active-plan.cjs {plan-dir}
+```
+
+**Report Output Rules:**
+1. Use `Report:` and `Plan dir:` from `## Naming` section
+2. Active plans use plan-specific reports path
+3. Suggested plans use default reports path to prevent old plan pollution
+
 ## File Structure
+
+**Important:**
+- DO NOT create plans or reports in USER directory.
+- ALWAYS create plans or reports in CURRENT WORKING PROJECT DIRECTORY.
 
 ### Overview Plan (plan.md)
 
@@ -42,6 +75,8 @@ description: "Add user authentication with OAuth2 support"
 status: pending
 priority: P1
 effort: 8h
+issue: 123
+branch: kai/feat/oauth-auth
 tags: [auth, backend, security]
 created: 2025-12-16
 ---
@@ -72,7 +107,7 @@ Brief description of what this plan accomplishes.
 - Key dependencies
 
 ### Phase Files (phase-XX-name.md)
-Follow the `./docs/development-rules.md` file.
+Fully respect the `./docs/development-rules.md` file.
 Each phase file should contain:
 
 **Context Links**

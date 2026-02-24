@@ -13,6 +13,14 @@ import os
 import sys
 from pathlib import Path
 
+# Fix Windows cp1252 encoding: Unicode symbols (✓, ⚠, ✗) can't encode on Windows.
+# Reconfigure stdout to UTF-8 with replacement (Python 3.7+).
+if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    if hasattr(sys.stderr, 'reconfigure'):
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 # Color codes for terminal output
 GREEN = '\033[92m'
 YELLOW = '\033[93m'
@@ -81,7 +89,8 @@ def check_centralized_resolver():
     """Check if centralized resolver is available."""
     print_header("Checking Centralized Resolver")
 
-    resolver_path = Path.home() / '.agent' / 'scripts' / 'resolve_env.py'
+    claude_root = Path(__file__).parent.parent.parent.parent
+    resolver_path = claude_root / 'scripts' / 'resolve_env.py'
 
     if resolver_path.exists():
         print_success(f"Centralized resolver found: {resolver_path}")
@@ -106,7 +115,8 @@ def find_api_key():
     print_header("Checking API Key Configuration")
 
     # Try to use centralized resolver
-    sys.path.insert(0, str(Path.home() / '.agent' / 'scripts'))
+    claude_root = Path(__file__).parent.parent.parent.parent
+    sys.path.insert(0, str(claude_root / 'scripts'))
     try:
         from resolve_env import resolve_env
 

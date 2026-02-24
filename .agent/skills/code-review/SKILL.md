@@ -1,127 +1,106 @@
 ---
 name: code-review
-description: Use when completing tasks or major features requiring review, when receiving code review feedback (especially if unclear or technically questionable), or before making completion/success claims. Covers receiving feedback with technical rigor, requesting reviews, and verification gates requiring evidence before status claims.
+description: Review code quality, receive feedback with technical rigor, verify completion claims. Use before PRs, after implementing features, when claiming task completion. Includes scout-based edge case detection.
 ---
 
 # Code Review
 
 Guide proper code review practices emphasizing technical rigor, evidence-based claims, and verification over performative responses.
 
-## Overview
-
-Code review requires three distinct practices:
-
-1. **Receiving feedback** — Technical evaluation over performative agreement
-2. **Requesting reviews** — Systematic code review process
-3. **Verification gates** — Evidence before any completion claims
-
-Each practice has specific triggers and protocols detailed in reference files.
-
 ## Core Principle
 
-Always honoring **YAGNI**, **KISS**, and **DRY** principles.
+**YAGNI**, **KISS**, **DRY** always. Technical correctness over social comfort.
 **Be honest, be brutal, straight to the point, and be concise.**
 
-**Technical correctness over social comfort.** Verify before implementing. Ask before assuming. Evidence before claims.
+Verify before implementing. Ask before assuming. Evidence before claims.
 
-## When to Use This Skill
+## Three Practices
 
-### Receiving Feedback
-Trigger when:
-- Receiving code review comments from any source
-- Feedback seems unclear or technically questionable
-- Multiple review items need prioritization
-- External reviewer lacks full context
-- Suggestion conflicts with existing decisions
-
-**Reference:** `references/code-review-reception.md`
-
-### Requesting Review
-Trigger when:
-- Completing major features or refactors
-- Before merging to main branch
-- Stuck and need fresh perspective
-- After fixing complex bugs
-
-**Reference:** `references/requesting-code-review.md`
-
-### Verification Gates
-Trigger when:
-- About to claim tests pass, build succeeds, or work is complete
-- Before committing, pushing, or creating PRs
-- Moving to next task
-- Any statement suggesting success/completion
-
-**Reference:** `references/verification-before-completion.md`
+| Practice | When | Reference |
+|----------|------|-----------|
+| Receiving feedback | Unclear feedback, external reviewers, needs prioritization | `references/code-review-reception.md` |
+| Requesting review | After tasks, before merge, stuck on problem | `references/requesting-code-review.md` |
+| Verification gates | Before any completion claim, commit, PR | `references/verification-before-completion.md` |
+| **Edge case scouting** | After implementation, before review | `references/edge-case-scouting.md` |
 
 ## Quick Decision Tree
 
 ```
 SITUATION?
 │
-├─ Received feedback
-│  ├─ Unclear items? → STOP, ask for clarification first
-│  ├─ From human partner? → Understand, then implement
-│  └─ From external reviewer? → Verify technically before implementing
-│
-├─ Completed work
-│  └─ Major feature/task? → Request code review
-│
-└─ About to claim status
-   ├─ Have fresh verification? → State claim WITH evidence
-   └─ No fresh verification? → RUN verification command first
+├─ Received feedback → STOP if unclear, verify if external, implement if human partner
+├─ Completed work → Scout edge cases → Request code-reviewer subagent
+└─ About to claim status → RUN verification command FIRST
 ```
 
-## Receiving Feedback Protocol
+## Receiving Feedback
 
-### Response Pattern
-READ → UNDERSTAND → VERIFY → EVALUATE → RESPOND → IMPLEMENT
+**Pattern:** READ → UNDERSTAND → VERIFY → EVALUATE → RESPOND → IMPLEMENT
 
-### Key Rules
-- No performative agreement: "You're absolutely right!", "Great point!", "Thanks for [anything]"
-- No implementation before verification
-- Restate requirement, ask questions, push back with technical reasoning, or just start working
-- If unclear: STOP and ask for clarification on ALL unclear items first
-- YAGNI check: search for usage before implementing suggested "proper" features
+**Rules:**
+- ❌ No performative agreement: "You're absolutely right!", "Great point!"
+- ❌ No implementation before verification
+- ✅ Restate, ask questions, push back with reasoning, or just work
+- ✅ YAGNI check: grep for usage before implementing "proper" features
+
+**Source handling:**
+- Human partner: Trusted - implement after understanding
+- External reviewers: Verify technically, check breakage, push back if wrong
 
 **Full protocol:** `references/code-review-reception.md`
 
-## Requesting Review Protocol
+## Requesting Review
 
-### When to Request
-- After major feature completion
-- Before merge to main
-- When stuck (fresh perspective)
+**When:** After each task, major features, before merge
 
-### Process
-1. Get git SHAs for the diff range
-2. Review the changes against the plan/requirements
-3. Act on feedback: Fix Critical immediately, Important before proceeding, note Minor for later
+**Process:**
+1. **Scout edge cases first** (see below)
+2. Get SHAs: `BASE_SHA=$(git rev-parse HEAD~1)` and `HEAD_SHA=$(git rev-parse HEAD)`
+3. Dispatch code-reviewer subagent with: WHAT, PLAN, BASE_SHA, HEAD_SHA, DESCRIPTION
+4. Fix Critical immediately, Important before proceeding
 
 **Full protocol:** `references/requesting-code-review.md`
 
-## Verification Gates Protocol
+## Edge Case Scouting (NEW)
 
-### The Iron Law
-**NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE**
+**When:** After implementation, before requesting code-reviewer
 
-### Gate Function
-IDENTIFY command → RUN full command → READ output → VERIFY confirms claim → THEN claim
+**Purpose:** Proactively find edge cases, side effects, and potential issues using scout skill.
 
-Skip any step = lying, not verifying
+**Process:**
+1. Invoke `/scout` with edge-case-focused prompt
+2. Scout analyzes: affected files, data flows, error paths, boundary conditions
+3. Review scout findings for potential issues
+4. Address critical gaps before code review
 
-### Requirements
-- Tests pass: Test output shows 0 failures
-- Build succeeds: Build command exit 0
-- Bug fixed: Test original symptom passes
-- Requirements met: Line-by-line checklist verified
+**Full protocol:** `references/edge-case-scouting.md`
+
+## Verification Gates
+
+**Iron Law:** NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
+
+**Gate:** IDENTIFY command → RUN full → READ output → VERIFY confirms → THEN claim
+
+**Requirements:**
+- Tests pass: Output shows 0 failures
+- Build succeeds: Exit 0
+- Bug fixed: Original symptom passes
+- Requirements met: Checklist verified
+
+**Red Flags:** "should"/"probably"/"seems to", satisfaction before verification, trusting agent reports
 
 **Full protocol:** `references/verification-before-completion.md`
 
+## Integration with Workflows
+
+- **Subagent-Driven:** Scout edge cases → Review after EACH task → Verify before next
+- **Pull Requests:** Scout → Verify tests → Code-reviewer review → Merge
+- **General:** Verification gates before any status claims
+
 ## Bottom Line
 
-1. Technical rigor over social performance — No performative agreement
-2. Systematic review processes
-3. Evidence before claims — Verification gates always
+1. Technical rigor over social performance
+2. Scout edge cases before review
+3. Evidence before claims
 
-Verify. Question. Then implement. Evidence. Then claim.
+Verify. Scout. Question. Then implement. Evidence. Then claim.

@@ -65,6 +65,7 @@ async function fill() {
     } else {
       await disconnectBrowser();
     }
+    process.exit(0);
   } catch (error) {
     // Enhance error message with troubleshooting tips
     const enhanced = enhanceError(error, args.selector);

@@ -123,6 +123,7 @@ async function selectRef() {
     } else {
       await disconnectBrowser();
     }
+    process.exit(0);
   } catch (error) {
     outputError(error);
   }

@@ -4,9 +4,10 @@
 
 ## Core Activities
 
-### Codebase Search
-- Search the codebase for files needed to complete the task
-- Divide the codebase into logical sections and search in parallel
+### Parallel Scout Agents
+- Use `/scout-ext` (preferred) or `/scout` (fallback) slash command to search the codebase for files needed to complete the task
+- Each scout locates files needed for specific task aspects
+- Wait for all scout agents to report back before analysis
 - Efficient for finding relevant code across large codebases
 
 ### Essential Documentation Review
@@ -55,7 +56,7 @@ ALWAYS read these files first:
 ## Best Practices
 
 - Start with documentation before diving into code
-- Use codebase search for targeted file discovery
+- Use scouts for targeted file discovery
 - Document patterns found for consistency
 - Note any inconsistencies or technical debt
 - Consider impact on existing features

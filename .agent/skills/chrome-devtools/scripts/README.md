@@ -169,6 +169,24 @@ Measure performance metrics and record trace.
 node performance.js --url https://example.com [--trace trace.json] [--metrics] [--resources true]
 ```
 
+### ws-debug.js
+Debug WebSocket connections (basic mode).
+
+```bash
+node ws-debug.js
+```
+
+Monitors WebSocket events via CDP: created, handshake, response, closed, error.
+
+### ws-full-debug.js
+Debug WebSocket connections with full event tracking.
+
+```bash
+node ws-full-debug.js
+```
+
+Monitors all WebSocket events including frame sent/received, with detailed logging.
+
 ## Common Options
 
 - `--headless false` - Show browser window

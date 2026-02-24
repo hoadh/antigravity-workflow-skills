@@ -19,6 +19,21 @@ let browserInstance = null;
 let pageInstance = null;
 
 /**
+ * Get default Chrome profile path based on OS
+ * @returns {string} - Path to Chrome's default user data directory
+ */
+function getDefaultChromeProfilePath() {
+  switch (process.platform) {
+    case 'darwin':
+      return `${process.env.HOME}/Library/Application Support/Google/Chrome`;
+    case 'win32':
+      return `${process.env.LOCALAPPDATA}/Google/Chrome/User Data`;
+    default: // Linux and others
+      return `${process.env.HOME}/.config/google-chrome`;
+  }
+}
+
+/**
  * Read session info from file
  */
 function readSession() {
@@ -201,6 +216,13 @@ export async function getBrowser(options = {}) {
     return browserInstance;
   }
 
+  // Resolve Chrome profile path
+  let userDataDir = options.userDataDir || options.profile;
+  if (options.useDefaultProfile) {
+    userDataDir = getDefaultChromeProfilePath();
+    log(`Using default Chrome profile: ${userDataDir}`);
+  }
+
   // Launch new browser
   const launchOptions = {
     headless: options.headless !== false,
@@ -214,6 +236,7 @@ export async function getBrowser(options = {}) {
       width: 1920,
       height: 1080
     },
+    ...(userDataDir && { userDataDir }),
     ...options
   };
 

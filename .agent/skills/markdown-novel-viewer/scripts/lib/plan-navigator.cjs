@@ -365,6 +365,24 @@ function getNavigationContext(filePath) {
 }
 
 /**
+ * Get status badge for phase group
+ * @param {Array} phases - Phases in group
+ * @returns {string} - Badge HTML
+ */
+function getGroupBadge(phases) {
+  const completed = phases.filter(p => p.status === 'completed' || p.status === 'done').length;
+  const inProgress = phases.filter(p => p.status === 'in-progress').length;
+
+  if (completed === phases.length) {
+    return '<span class="phase-badge badge-done">✓</span>';
+  } else if (inProgress > 0) {
+    return '<span class="phase-badge badge-progress">●</span>';
+  } else {
+    return '<span class="phase-badge badge-pending">○</span>';
+  }
+}
+
+/**
  * Generate navigation sidebar HTML
  * @param {string} filePath - Current file path
  * @returns {string} - HTML navigation sidebar
@@ -379,61 +397,107 @@ function generateNavSidebar(filePath) {
   const planName = path.basename(planInfo.planDir);
   const normalizedCurrentPath = path.normalize(filePath);
 
-  const items = allPhases.map((phase, index) => {
-    const isActive = index === currentIndex;
-    const statusClass = phase.status.replace(/\s+/g, '-');
-    const normalizedPhasePath = path.normalize(phase.file);
-    const isSameFile = normalizedPhasePath === normalizedCurrentPath;
+  // Group phases (every 10 phases or create logical groups)
+  const groups = [];
+  let currentGroup = [];
+  let groupStart = 0;
 
-    // Check if phase file actually exists on disk
-    const fileExists = fs.existsSync(phase.file);
-    const unavailableClass = !fileExists ? 'unavailable' : '';
+  allPhases.forEach((phase, index) => {
+    if (currentGroup.length === 0) {
+      groupStart = phase.phase;
+    }
+    currentGroup.push({ phase, index });
 
-    // If file doesn't exist, render as non-clickable span with tooltip
-    if (!fileExists) {
+    // Group every 10 phases or when we hit phase 10, 20, 30, etc.
+    if (currentGroup.length === 10 || index === allPhases.length - 1 ||
+        (phase.phase % 10 === 0 && phase.phase !== groupStart)) {
+      groups.push({
+        start: groupStart,
+        end: phase.phase,
+        phases: [...currentGroup]
+      });
+      currentGroup = [];
+    }
+  });
+
+  // Generate accordion groups
+  const groupsHtml = groups.map((group, groupIdx) => {
+    const groupId = `phase-group-${group.start}-${group.end}`;
+    const groupLabel = group.start === 0 ? 'Overview' :
+                       group.start === group.end ? `Phase ${group.start}` :
+                       `Phases ${group.start}-${group.end}`;
+
+    const groupBadge = getGroupBadge(group.phases.map(p => p.phase));
+
+    const phaseItems = group.phases.map(({ phase, index }) => {
+      const isActive = index === currentIndex;
+      const statusClass = phase.status.replace(/\s+/g, '-');
+      const normalizedPhasePath = path.normalize(phase.file);
+      const isSameFile = normalizedPhasePath === normalizedCurrentPath;
+
+      // Check if phase file actually exists on disk
+      const fileExists = fs.existsSync(phase.file);
+      const unavailableClass = !fileExists ? 'unavailable' : '';
+
+      // If file doesn't exist, render as non-clickable span with tooltip
+      if (!fileExists) {
+        return `
+          <li class="phase-item ${unavailableClass}" data-status="${statusClass}" title="Phase planned but not yet implemented">
+            <span class="phase-link-disabled">
+              <span class="status-dot ${statusClass}"></span>
+              <span class="phase-name">${phase.name}</span>
+              <span class="unavailable-badge">Planned</span>
+            </span>
+          </li>
+        `;
+      }
+
+      // Build href: use anchor for same-file phases, full URL for different files
+      let href;
+      let isInlineSection = false;
+      if (isSameFile && phase.anchor) {
+        // Same file with anchor - use hash fragment only for smooth scrolling
+        href = `#${phase.anchor}`;
+        isInlineSection = true;
+      } else if (phase.anchor) {
+        // Different file with anchor
+        href = `/view?file=${encodeURIComponent(phase.file)}#${phase.anchor}`;
+      } else {
+        // No anchor (separate phase file or plan overview)
+        href = `/view?file=${encodeURIComponent(phase.file)}`;
+      }
+
+      // Add data attributes for client-side section tracking
+      const dataAnchor = phase.anchor ? `data-anchor="${phase.anchor}"` : '';
+      const inlineSectionClass = isInlineSection ? 'inline-section' : '';
+
+      // Type icon: hash/anchor for inline sections, file for separate docs
+      const typeIcon = isInlineSection
+        ? `<svg class="phase-type-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-.5 9.45a.75.75 0 01-1.06-1.06l-1.25 1.25a2 2 0 01-2.83-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25z"/></svg>`
+        : `<svg class="phase-type-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M3.75 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 00.25-.25V4.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H3.75zM2 1.75C2 .784 2.784 0 3.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0112.25 16h-8.5A1.75 1.75 0 012 14.25V1.75z"/></svg>`;
+
       return `
-        <li class="phase-item ${unavailableClass}" data-status="${statusClass}" title="Phase planned but not yet implemented">
-          <span class="phase-link-disabled">
+        <li class="phase-item ${isActive ? 'active' : ''} ${inlineSectionClass}" data-status="${statusClass}" ${dataAnchor}>
+          <a href="${href}">
+            ${typeIcon}
             <span class="status-dot ${statusClass}"></span>
             <span class="phase-name">${phase.name}</span>
-            <span class="unavailable-badge">Planned</span>
-          </span>
+          </a>
         </li>
       `;
-    }
-
-    // Build href: use anchor for same-file phases, full URL for different files
-    let href;
-    let isInlineSection = false;
-    if (isSameFile && phase.anchor) {
-      // Same file with anchor - use hash fragment only for smooth scrolling
-      href = `#${phase.anchor}`;
-      isInlineSection = true;
-    } else if (phase.anchor) {
-      // Different file with anchor
-      href = `/view?file=${encodeURIComponent(phase.file)}#${phase.anchor}`;
-    } else {
-      // No anchor (separate phase file or plan overview)
-      href = `/view?file=${encodeURIComponent(phase.file)}`;
-    }
-
-    // Add data attributes for client-side section tracking
-    const dataAnchor = phase.anchor ? `data-anchor="${phase.anchor}"` : '';
-    const inlineSectionClass = isInlineSection ? 'inline-section' : '';
-
-    // Type icon: hash/anchor for inline sections, file for separate docs
-    const typeIcon = isInlineSection
-      ? `<svg class="phase-type-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-.5 9.45a.75.75 0 01-1.06-1.06l-1.25 1.25a2 2 0 01-2.83-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25z"/></svg>`
-      : `<svg class="phase-type-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M3.75 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 00.25-.25V4.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H3.75zM2 1.75C2 .784 2.784 0 3.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0112.25 16h-8.5A1.75 1.75 0 012 14.25V1.75z"/></svg>`;
+    }).join('');
 
     return `
-      <li class="phase-item ${isActive ? 'active' : ''} ${inlineSectionClass}" data-status="${statusClass}" ${dataAnchor}>
-        <a href="${href}">
-          ${typeIcon}
-          <span class="status-dot ${statusClass}"></span>
-          <span class="phase-name">${phase.name}</span>
-        </a>
-      </li>
+      <div class="phase-group" data-phase-id="${groupId}">
+        <button class="phase-header" tabindex="0" aria-expanded="true" aria-controls="${groupId}-items">
+          <span class="phase-chevron">▼</span>
+          <span class="phase-name">${groupLabel}</span>
+          ${groupBadge}
+        </button>
+        <ul class="phase-items" id="${groupId}-items">
+          ${phaseItems}
+        </ul>
+      </div>
     `;
   }).join('');
 
@@ -443,9 +507,7 @@ function generateNavSidebar(filePath) {
         <span class="plan-icon">&#128214;</span>
         <span>${planName}</span>
       </div>
-      <ul class="phase-list">
-        ${items}
-      </ul>
+      ${groupsHtml}
     </nav>
   `;
 }
