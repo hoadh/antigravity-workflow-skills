@@ -16,6 +16,16 @@ Comprehensive codebase review and analysis.
    - Architecture patterns
 4. **Report** findings with severity ratings
 
+## Report Output
+
+Save review report to `./plans/reports/code-reviewer-{YYMMDD}-{HHMM}-{slug}.md` containing:
+- Code quality issues ranked by severity
+- Security concerns
+- Performance bottlenecks
+- Technical debt items
+- Architecture observations
+- Recommendations
+
 ## Notes
 - Use `code-review` skill for review protocols
 - Sacrifice grammar for concision in reports

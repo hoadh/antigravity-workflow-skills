@@ -14,6 +14,14 @@ Create a plan where phases are explicitly marked for parallel execution.
 4. **Create** plan in `./plans/` with parallel annotations
 5. **Report** plan summary
 
+## Report Output
+
+Save to `plans/{YYMMDD}-{HHMM}-{slug}/`:
+- `research/researcher-XX-{topic}.md` — ≤150 lines each
+- `reports/scout-{slug}.md` — codebase analysis
+- `plan.md` — overview with YAML frontmatter, phases annotated `[PARALLEL]` or `[SEQUENTIAL]`
+- `phase-XX-{name}.md` — detailed phase files with file ownership boundaries
+
 ## Notes
 - Phases marked with `[PARALLEL]` or `[SEQUENTIAL]`
 - File ownership prevents conflicts between parallel phases

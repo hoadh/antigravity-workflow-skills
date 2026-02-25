@@ -14,6 +14,11 @@ Bootstrap with parallel phase execution for maximum speed.
 4. **Verify** integration
 5. **Report** summary
 
+## Report Output
+
+Same as `/bootstrap` — save reports to `./plans/reports/` using `{type}-{YYMMDD}-{HHMM}-{slug}.md`.
+Plan saved to `plans/{YYMMDD}-{HHMM}-{slug}/`.
+
 ## Notes
 - Phases without dependencies execute simultaneously
 - File ownership boundaries prevent conflicts

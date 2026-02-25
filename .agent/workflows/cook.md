@@ -60,3 +60,17 @@ Operate by the holy trinity: **YAGNI**, **KISS**, **DRY**.
 * Summarize changes briefly, guide user to get started, suggest next steps
 * Ask if they want to commit and push to git
 * List any unresolved questions at the end
+
+## Report Output
+
+Save reports to `./plans/reports/` using naming: `{type}-{YYMMDD}-{HHMM}-{slug}.md`
+
+| Report Type | `{type}` | When |
+|---|---|---|
+| Research | `researcher` | After research phase |
+| Scout | `scout` | After codebase search |
+| Test summary | `tester` | After testing phase |
+| Code review | `code-reviewer` | After review phase |
+| Final summary | `cook` | After completion |
+
+If a plan is created during this workflow, save it to `plans/{YYMMDD}-{HHMM}-{slug}/` with the standard plan structure.

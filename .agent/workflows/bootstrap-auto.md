@@ -16,6 +16,11 @@ Automatically bootstrap a new project without manual intervention.
 8. **Create documentation** in `./docs/`
 9. **Report** summary and next steps
 
+## Report Output
+
+Same as `/bootstrap` — save reports to `./plans/reports/` using `{type}-{YYMMDD}-{HHMM}-{slug}.md`.
+Plan saved to `plans/{YYMMDD}-{HHMM}-{slug}/`.
+
 ## Notes
 - Follows same workflow as `/bootstrap` but skips user confirmation steps
 - Uses default choices when multiple options available

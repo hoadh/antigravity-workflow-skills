@@ -24,16 +24,25 @@ Before creating a new plan:
 5. **Create plan** — Use the `planning` skill to create the implementation plan
 6. **Save** — Save the plan to `./plans/{date}-{slug}/` directory
 
-## Plan Structure
+## Report Output
+
+Save all outputs using this naming convention:
 
 ```
-plans/{date}-{slug}/
-├── research/           # Research reports
-├── reports/            # Scout/analysis reports
-├── plan.md             # Overview (under 80 lines)
-├── phase-01-*.md       # Detailed phase files
+plans/{YYMMDD}-{HHMM}-{slug}/
+├── research/
+│   ├── researcher-01-{topic}.md    # ≤150 lines each
+│   └── ...
+├── reports/
+│   └── scout-{slug}.md
+├── plan.md                         # Overview (under 80 lines)
+├── phase-01-{name}.md
 └── ...
 ```
+
+- `{YYMMDD}` = current date (e.g., `260225`), `{HHMM}` = current time (e.g., `1430`)
+- `{slug}` = kebab-case task description
+- `plan.md` MUST start with YAML frontmatter: title, description, status, priority, effort, branch, tags, created
 
 ## Important Notes
 

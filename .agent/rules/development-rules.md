@@ -1,7 +1,3 @@
----
-trigger: always_on
----
-
 # Development Rules
 
 * Always follow these principles: **YAGNI** (You Aren't Gonna Need It) — **KISS** (Keep It Simple, Stupid) — **DRY** (Don't Repeat Yourself)

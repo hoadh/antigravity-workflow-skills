@@ -57,3 +57,9 @@ If approved:
 ### 11. Final Report
 - Summarize changes, guide to get started, suggest next steps
 - Ask if user wants to commit and push
+
+## Report Output
+
+Save reports to `./plans/reports/` using `{type}-{YYMMDD}-{HHMM}-{slug}.md` naming.
+Plan saved to `plans/{YYMMDD}-{HHMM}-{slug}/` with standard plan structure.
+Research reports: ≤150 lines, saved to `{plan-dir}/research/`.

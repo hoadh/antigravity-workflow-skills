@@ -20,6 +20,14 @@ Investigate reported issues, find root causes, and explain findings.
    * Recommended fix approach
    * Risk assessment
 
+## Report Output
+
+Save debug analysis to `./plans/reports/debugger-{YYMMDD}-{HHMM}-{slug}.md` containing:
+- Root cause analysis with evidence
+- Affected files and components
+- Recommended fix with implementation steps
+- Risk assessment
+
 ## Important Notes
 
 * **Do not** implement the fix automatically — only investigate and report

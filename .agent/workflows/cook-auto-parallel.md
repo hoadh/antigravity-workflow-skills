@@ -13,6 +13,11 @@ Create a parallel-executable plan and implement with concurrent workers.
 5. **Test** combined output
 6. **Report** summary
 
+## Report Output
+
+Same as `/cook` — save reports to `./plans/reports/` using `{type}-{YYMMDD}-{HHMM}-{slug}.md` naming.
+If a plan is created, save to `plans/{YYMMDD}-{HHMM}-{slug}/`.
+
 ## Notes
 - Each worker owns specific files (no conflicts)
 - Independent phases run simultaneously

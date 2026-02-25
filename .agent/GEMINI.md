@@ -19,11 +19,52 @@
 * List any unresolved questions at the end, if any
 * Ensure token efficiency while maintaining high quality
 
+### Report Output Convention (MANDATORY)
+
+All reports **MUST** be saved as Markdown files following this naming convention:
+
+* **Reports path**: `./plans/reports/{type}-{YYMMDD}-{HHMM}-{slug}.md`
+* **Plans path**: `./plans/{YYMMDD}-{HHMM}-{slug}/`
+
+| Token | Value | Example |
+|---|---|---|
+| `{type}` | Report category | `researcher`, `scout`, `debugger`, `tester`, `code-reviewer`, `brainstormer`, `cook` |
+| `{YYMMDD}` | Current date | `260225` |
+| `{HHMM}` | Current time | `1430` |
+| `{slug}` | Kebab-case task description | `fix-auth-token-expiry` |
+
+**Plan directory structure:**
+```
+plans/{YYMMDD}-{HHMM}-{slug}/
+├── research/researcher-XX-{topic}.md   # ≤150 lines each
+├── reports/scout-{slug}.md
+├── plan.md                              # Overview, under 80 lines, YAML frontmatter
+└── phase-XX-{name}.md
+```
+
+**Rules:**
+* Always create `./plans/reports/` directory if it doesn't exist
+* Research reports must be ≤150 lines
+* `plan.md` must include YAML frontmatter: title, description, status, priority, effort, branch, tags, created
+* Each workflow's `## Report Output` section specifies which report types to generate
+
+## [IMPORTANT] Consider Modularization
+
+* If a code file exceeds 200 lines of code, consider modularizing it
+* Check existing modules before creating new
+* Analyze logical separation boundaries (functions, classes, concerns)
+* Use kebab-case naming with long descriptive names — file names should be self-documenting for LLM tools (Grep, Glob, Search)
+* Write descriptive code comments
+* After modularization, continue with main task
+* When not to modularize: Markdown files, plain text files, bash scripts, configuration files, environment variables files, etc.
+
 ## Python Scripts (Skills)
 
 When running Python scripts from `.agent/skills/`, use the venv Python interpreter:
 * **Linux/macOS:** `.agent/skills/.venv/bin/python3 scripts/xxx.py`
 * **Windows:** `.agent\skills\.venv\Scripts\python.exe scripts\xxx.py`
+
+When scripts of skills fail, don't stop — try to fix them directly.
 
 ## Documentation Management
 
@@ -188,30 +229,21 @@ Update these documents when:
 ### Plans
 
 #### Plan Location
-Save plans in `./plans` directory with timestamp and descriptive name.
-
-**Example:** `plans/251101-1505-authentication-and-profile-implementation/`
+Save plans in `./plans` directory: `plans/{YYMMDD}-{HHMM}-{slug}/`
 
 #### File Organization
 
 ```
-plans/
-├── 20251101-1505-authentication-and-profile-implementation/
-    ├── research/
-    │   ├── researcher-XX-report.md
-    │   └── ...
-│   ├── reports/
-│   │   ├── scout-report.md
-│   │   ├── researcher-report.md
-│   │   └── ...
-│   ├── plan.md                                # Overview access point
-│   ├── phase-01-setup-environment.md          # Setup environment
-│   ├── phase-02-implement-database.md         # Database models
-│   ├── phase-03-implement-api-endpoints.md    # API endpoints
-│   ├── phase-04-implement-ui-components.md    # UI components
-│   ├── phase-05-implement-authentication.md   # Auth & authorization
-│   ├── phase-06-implement-profile.md          # Profile page
-│   └── phase-07-write-tests.md                # Tests
+plans/{YYMMDD}-{HHMM}-{slug}/
+├── research/
+│   ├── researcher-XX-{topic}.md        # ≤150 lines each
+│   └── ...
+├── reports/
+│   ├── scout-{slug}.md
+│   └── ...
+├── plan.md                              # Overview (under 80 lines)
+├── phase-01-{name}.md
+├── phase-02-{name}.md
 └── ...
 ```
 

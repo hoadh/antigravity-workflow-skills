@@ -11,6 +11,13 @@ Quick planning — no research phase, analyze and plan directly.
 3. **Create** plan in `./plans/` directory
 4. **Report** plan summary
 
+## Report Output
+
+Save to `plans/{YYMMDD}-{HHMM}-{slug}/`:
+- `reports/scout-{slug}.md` — codebase analysis
+- `plan.md` — overview with YAML frontmatter (under 80 lines)
+- `phase-XX-{name}.md` — detailed phase files
+
 ## Notes
 - Skips research phase entirely
 - Uses existing codebase knowledge

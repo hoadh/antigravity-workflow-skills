@@ -27,9 +27,9 @@ Operate by: **YAGNI**, **KISS**, **DRY**.
 6. **Documentation**: Create comprehensive summary report with the agreed solution
 7. **Finalize**: Ask if user wants to create a detailed implementation plan. If yes, use `/plan` workflow.
 
-## Output Requirements
+## Report Output
 
-When brainstorming concludes, create a detailed summary report including:
+Save brainstorm summary to `./plans/reports/brainstormer-{YYMMDD}-{HHMM}-{slug}.md` containing:
 - Problem statement and requirements
 - Evaluated approaches with pros/cons
 - Final recommended solution with rationale

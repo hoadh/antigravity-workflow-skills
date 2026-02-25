@@ -15,6 +15,11 @@ Same as `/cook` workflow but skips user confirmation steps.
 7. **Update** documentation
 8. **Report** summary
 
+## Report Output
+
+Same as `/cook` — save reports to `./plans/reports/` using `{type}-{YYMMDD}-{HHMM}-{slug}.md` naming.
+If a plan is created, save to `plans/{YYMMDD}-{HHMM}-{slug}/`.
+
 ## Notes
 - No user confirmation gates
 - Auto-proceeds through all phases

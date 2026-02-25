@@ -19,6 +19,14 @@ Run the project's test suite and analyze results.
    * Root cause analysis for any failures
    * Recommendations for fixes
 
+## Report Output
+
+Save test summary to `./plans/reports/tester-{YYMMDD}-{HHMM}-{slug}.md` containing:
+- Pass/fail summary (total, passed, failed, skipped)
+- Failure details with root cause analysis
+- Coverage metrics if available
+- Recommendations for fixes
+
 ## Important Notes
 
 * **Do not** start implementing fixes — only run and analyze

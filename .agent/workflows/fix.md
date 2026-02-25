@@ -45,6 +45,11 @@ Analyze issues and route to the appropriate fix strategy.
 4. **Verify** — Run tests and confirm the fix works
 5. **Review** — Check for regressions
 
+## Report Output
+
+For complex fixes (routes D-G), save investigation report to `./plans/reports/debugger-{YYMMDD}-{HHMM}-{slug}.md`.
+For all fixes with tests, save test results to `./plans/reports/tester-{YYMMDD}-{HHMM}-{slug}.md`.
+
 ## Notes
 
 * If unclear, ask user for clarification before routing

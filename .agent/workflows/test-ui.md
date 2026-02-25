@@ -18,6 +18,18 @@ Comprehensive UI testing with visual verification.
 8. **Generate** comprehensive Markdown report with embedded screenshots
 9. **Report** summary of findings and recommendations
 
+## Report Output
+
+Save UI test report to `./plans/reports/test-ui-{YYMMDD}-{HHMM}-{slug}.md` containing:
+- Test plan and scope
+- Page-by-page results with embedded screenshots
+- Accessibility findings
+- Responsive behavior
+- Performance metrics
+- Recommendations
+
+Save screenshots to `./plans/reports/screenshots/` directory.
+
 ## Notes
 - Use `chrome-devtools` skill for browser automation
 - Use `ai-multimodal` skill for visual analysis

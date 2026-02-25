@@ -1,7 +1,3 @@
----
-trigger: always_on
----
-
 # Project Documentation Management
 
 ## Roadmap & Changelog Maintenance
@@ -35,33 +31,43 @@ Update these documents when:
 3. **After Updates**: Verify links, dates, and cross-references are accurate
 4. **Quality Check**: Ensure updates align with actual implementation progress
 
+## Report Output Convention (MANDATORY)
+
+All reports MUST follow this naming convention:
+
+* **Reports**: `./plans/reports/{type}-{YYMMDD}-{HHMM}-{slug}.md`
+* **Plans**: `./plans/{YYMMDD}-{HHMM}-{slug}/`
+
+| Token | Value | Example |
+|---|---|---|
+| `{type}` | Report category | `researcher`, `scout`, `debugger`, `tester`, `code-reviewer`, `brainstormer`, `cook` |
+| `{YYMMDD}` | Current date | `260225` |
+| `{HHMM}` | Current time | `1430` |
+| `{slug}` | Kebab-case task description | `fix-auth-token-expiry` |
+
+Rules:
+* Always create `./plans/reports/` directory if it doesn't exist
+* Research reports: ≤150 lines
+* `plan.md` must include YAML frontmatter: title, description, status, priority, effort, branch, tags, created
+
 ## Plans
 
 ### Plan Location
-Save plans in `./plans` directory with timestamp and descriptive name.
-
-**Example:** `plans/251101-1505-authentication-and-profile-implementation/`
+Save plans in `./plans` directory: `plans/{YYMMDD}-{HHMM}-{slug}/`
 
 ### File Organization
 
 ```
-plans/
-├── 20251101-1505-authentication-and-profile-implementation/
-    ├── research/
-    │   ├── researcher-XX-report.md
-    │   └── ...
-│   ├── reports/
-│   │   ├── scout-report.md
-│   │   ├── researcher-report.md
-│   │   └── ...
-│   ├── plan.md                                # Overview access point
-│   ├── phase-01-setup-environment.md          # Setup environment
-│   ├── phase-02-implement-database.md         # Database models
-│   ├── phase-03-implement-api-endpoints.md    # API endpoints
-│   ├── phase-04-implement-ui-components.md    # UI components
-│   ├── phase-05-implement-authentication.md   # Auth & authorization
-│   ├── phase-06-implement-profile.md          # Profile page
-│   └── phase-07-write-tests.md                # Tests
+plans/{YYMMDD}-{HHMM}-{slug}/
+├── research/
+│   ├── researcher-XX-{topic}.md        # ≤150 lines each
+│   └── ...
+├── reports/
+│   ├── scout-{slug}.md
+│   └── ...
+├── plan.md                              # Overview (under 80 lines)
+├── phase-01-{name}.md
+├── phase-02-{name}.md
 └── ...
 ```
 

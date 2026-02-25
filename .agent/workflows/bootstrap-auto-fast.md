@@ -13,6 +13,11 @@ Fast bootstrap — skip research phase, use sensible defaults.
 5. **Test** and fix
 6. **Report** summary
 
+## Report Output
+
+Save reports to `./plans/reports/` using `{type}-{YYMMDD}-{HHMM}-{slug}.md`.
+Plan saved to `plans/{YYMMDD}-{HHMM}-{slug}/`.
+
 ## Notes
 - No research phase — uses best-practice defaults
 - Minimal user interaction
