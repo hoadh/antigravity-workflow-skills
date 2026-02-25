@@ -24,11 +24,11 @@ create_backup() {
     local backup_dir="${backup_base}/.backup-${timestamp}"
 
     mkdir -p "$backup_dir"
-    for source in "$@"; do
-        if [ -d "$source" ]; then
-            cp -r "$source" "$backup_dir/$(basename "$source")"
-        elif [ -f "$source" ]; then
-            cp "$source" "$backup_dir/"
+    for src_path in "$@"; do
+        if [ -d "$src_path" ]; then
+            cp -r "$src_path" "$backup_dir/$(basename "$src_path")"
+        elif [ -f "$src_path" ]; then
+            cp "$src_path" "$backup_dir/"
         fi
     done
     echo "$backup_dir"
@@ -92,32 +92,6 @@ safe_sync_dir() {
     fi
 }
 
-# Handle GEMINI.md with diff check and user prompt
-# Usage: safe_copy_gemini <source_file> <target_file> <backup_base_dir>
-safe_copy_gemini() {
-    local source="$1"
-    local target="$2"
-    local backup_base="$3"
-
-    if [ -f "$target" ]; then
-        if ! diff -q "$source" "$target" > /dev/null 2>&1; then
-            echo -e "${YELLOW}  ⚠ GEMINI.md has local modifications.${NC}"
-            read -p "  Overwrite with repo version? (Backup saved) [y/N]: " overwrite
-            if [[ "$overwrite" =~ ^[Yy]$ ]]; then
-                create_backup "$backup_base" "$target" > /dev/null
-                cp "$source" "$target"
-                echo -e "${GREEN}  Updated GEMINI.md (backup saved)${NC}"
-            else
-                echo "  Keeping existing GEMINI.md"
-            fi
-        else
-            cp "$source" "$target"
-        fi
-    else
-        cp "$source" "$target"
-    fi
-}
-
 # ─── Main Script ───
 
 echo -e "${BLUE}=========================================${NC}"
@@ -137,29 +111,41 @@ if [ "$scope_choice" == "1" ]; then
     echo -e "\n${YELLOW}Setting up Global Scope...${NC}"
 
     # Create necessary directories
-    mkdir -p ~/.gemini/antigravity
+    GLOBAL_INSTALL_BASE=~/.gemini/antigravity
+    GLOBAL_BACKUP_BASE=~/.gemini/backups
+    mkdir -p "$GLOBAL_INSTALL_BASE"
+    mkdir -p "$GLOBAL_BACKUP_BASE"
 
-    GLOBAL_BACKUP_BASE=~/.gemini/antigravity
+    # Backup existing content before sync (atomic — skills, workflows, GEMINI.md)
+    backup_sources=()
+    [ -d "$GLOBAL_INSTALL_BASE/skills" ] && backup_sources+=("$GLOBAL_INSTALL_BASE/skills")
+    [ -d "$GLOBAL_INSTALL_BASE/global_workflows" ] && backup_sources+=("$GLOBAL_INSTALL_BASE/global_workflows")
+    [ -f ~/.gemini/GEMINI.md ] && backup_sources+=(~/.gemini/GEMINI.md)
 
-    # Backup existing content before sync (atomic — all paths in one call)
-    if [ -d "$GLOBAL_BACKUP_BASE/skills" ] || [ -d "$GLOBAL_BACKUP_BASE/global_workflows" ]; then
-        echo "Creating backup of existing content..."
-        BACKUP_DIR=$(create_backup "$GLOBAL_BACKUP_BASE" "$GLOBAL_BACKUP_BASE/skills" "$GLOBAL_BACKUP_BASE/global_workflows")
+    if [ ${#backup_sources[@]} -gt 0 ]; then
+        echo "Creating backup of existing content (skills, workflows, GEMINI.md)..."
+        BACKUP_DIR=$(create_backup "$GLOBAL_BACKUP_BASE" "${backup_sources[@]}")
+        echo -e "${GREEN}  📦 Backup saved to: $BACKUP_DIR${NC}"
         rotate_backups "$GLOBAL_BACKUP_BASE" 3
     fi
 
     echo "Syncing skills..."
-    safe_sync_dir "$REPO_ROOT/.agent/skills" "$GLOBAL_BACKUP_BASE/skills" "skills"
+    safe_sync_dir "$REPO_ROOT/.agent/skills" "$GLOBAL_INSTALL_BASE/skills" "skills"
 
     echo "Syncing workflows..."
-    safe_sync_dir "$REPO_ROOT/.agent/workflows" "$GLOBAL_BACKUP_BASE/global_workflows" "workflows"
+    safe_sync_dir "$REPO_ROOT/.agent/workflows" "$GLOBAL_INSTALL_BASE/global_workflows" "workflows"
 
-    echo "Handling GEMINI.md global rules..."
-    safe_copy_gemini "$REPO_ROOT/.agent/GEMINI.md" ~/.gemini/GEMINI.md "$GLOBAL_BACKUP_BASE"
+    echo "Syncing GEMINI.md global rules..."
+    if [ -f ~/.gemini/GEMINI.md ] && ! diff -q "$REPO_ROOT/.agent/GEMINI.md" ~/.gemini/GEMINI.md > /dev/null 2>&1; then
+        echo -e "${YELLOW}  ⚠ GEMINI.md has local modifications — overwriting (backup already saved above).${NC}"
+    fi
+    rm -f ~/.gemini/GEMINI.md
+    cp -f "$REPO_ROOT/.agent/GEMINI.md" ~/.gemini/GEMINI.md
+    echo -e "${GREEN}  ✅ GEMINI.md synced${NC}"
 
     echo "Installing global skills dependencies..."
-    if [ -f ~/.gemini/antigravity/skills/install.sh ]; then
-        cd ~/.gemini/antigravity/skills
+    if [ -f "$GLOBAL_INSTALL_BASE/skills/install.sh" ]; then
+        cd "$GLOBAL_INSTALL_BASE/skills"
         chmod +x ./install.sh
         ./install.sh
     else
@@ -195,20 +181,22 @@ elif [ "$scope_choice" == "2" ]; then
     echo "Copying rules..."
     cp "$REPO_ROOT"/.agent/rules/*.md "$ABS_TARGET_DIR/.agents/rules/" 2>/dev/null || echo "No rules found to copy."
 
-    PROJECT_BACKUP_BASE="$ABS_TARGET_DIR/.agents"
+    PROJECT_INSTALL_BASE="$ABS_TARGET_DIR/.agents"
+    PROJECT_BACKUP_BASE="$ABS_TARGET_DIR/.agents-backups"
+    mkdir -p "$PROJECT_BACKUP_BASE"
 
     # Backup existing content before sync (atomic)
-    if [ -d "$PROJECT_BACKUP_BASE/skills" ] || [ -d "$PROJECT_BACKUP_BASE/workflows" ]; then
+    if [ -d "$PROJECT_INSTALL_BASE/skills" ] || [ -d "$PROJECT_INSTALL_BASE/workflows" ]; then
         echo "Creating backup of existing content..."
-        BACKUP_DIR=$(create_backup "$PROJECT_BACKUP_BASE" "$PROJECT_BACKUP_BASE/skills" "$PROJECT_BACKUP_BASE/workflows")
+        BACKUP_DIR=$(create_backup "$PROJECT_BACKUP_BASE" "$PROJECT_INSTALL_BASE/skills" "$PROJECT_INSTALL_BASE/workflows")
         rotate_backups "$PROJECT_BACKUP_BASE" 3
     fi
 
     echo "Syncing skills..."
-    safe_sync_dir "$REPO_ROOT/.agent/skills" "$PROJECT_BACKUP_BASE/skills" "skills"
+    safe_sync_dir "$REPO_ROOT/.agent/skills" "$PROJECT_INSTALL_BASE/skills" "skills"
 
     echo "Syncing workflows..."
-    safe_sync_dir "$REPO_ROOT/.agent/workflows" "$PROJECT_BACKUP_BASE/workflows" "workflows"
+    safe_sync_dir "$REPO_ROOT/.agent/workflows" "$PROJECT_INSTALL_BASE/workflows" "workflows"
 
     echo "Copying plan templates..."
     if [ -d "$REPO_ROOT/plans" ]; then
@@ -219,8 +207,8 @@ elif [ "$scope_choice" == "2" ]; then
     fi
 
     echo "Installing project skills dependencies..."
-    if [ -d "$ABS_TARGET_DIR/.agents/skills" ]; then
-        cd "$ABS_TARGET_DIR/.agents/skills" || echo -e "${RED}Failed to access skills dir${NC}"
+    if [ -d "$PROJECT_INSTALL_BASE/skills" ]; then
+        cd "$PROJECT_INSTALL_BASE/skills" || echo -e "${RED}Failed to access skills dir${NC}"
         if [ -f "./install.sh" ]; then
             chmod +x ./install.sh
             ./install.sh
