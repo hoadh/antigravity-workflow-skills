@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Project Instructions
 
 ## Role & Responsibilities

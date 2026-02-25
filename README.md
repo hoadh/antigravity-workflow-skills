@@ -6,11 +6,32 @@ Repository containing environment settings, prompt engineering schemas, workflow
 
 Tài liệu này hướng dẫn cách cài đặt các kỹ năng (Skills), thiết lập các quy tắc (Rules) cho Agent và cấu hình các mẫu kế hoạch (Plan templates) cho dự án.
 
+**Quick start:**
+
+```bash
+# Global Rules, Skills và Workflows
+cp -r .agent/skills ~/.gemini/antigravity/skills
+cp -r .agent/workflows ~/.gemini/antigravity/global_workflows
+cp -r .agent/GEMINI.md ~/.gemini/
+
+# Project Rules, Skills và Workflows
+cp -r .agent/rules/*.md your-project/.agents/rules
+cp -r .agent/skills your-project/.agents/skills
+cp -r .agent/workflows your-project/.agents/workflows
+
+# Copy các file template cho plans
+cp -r ./plans your-project/
+```
+
 ### 1. Cài đặt Skills (Kỹ năng)
 
 Để agent có thể hoạt động với đầy đủ các công cụ và thư viện cần thiết, bạn cần chạy script cài đặt. Mở terminal tại thư mục gốc và chạy các lệnh sau:
 
 ```bash
+# Di chuyển vào thư mục Skills
+cd .agent/skills
+# >> Nếu là Global skills thì `cd ~/.gemini/antigravity/skills`
+
 # Cấp quyền thực thi cho script
 chmod +x ./install.sh
 

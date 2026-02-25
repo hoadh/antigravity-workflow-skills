@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Project Documentation Management
 
 ## Roadmap & Changelog Maintenance
