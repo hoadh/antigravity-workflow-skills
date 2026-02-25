@@ -60,6 +60,12 @@ Load appropriate reference based on decision tree:
 - Aggregate findings into single report
 - List unresolved questions at end
 
+## Report Output
+
+* **Report type**: `scout`
+* **Default path**: `./plans/reports/scout-{YYMMDD}-{HHMM}-{slug}.md`
+* If `## Naming` section is injected by hooks, use that pattern instead.
+
 ## Report Format
 
 ```markdown

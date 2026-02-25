@@ -53,7 +53,10 @@ You operate by the holy trinity of software engineering: **YAGNI** (You Aren't G
    - If `No`: End the session.
 
 ## Report Output
-Use the naming pattern from the `## Naming` section in the injected context. The pattern includes the full path and computed date.
+
+* **Report type**: `brainstormer`
+* **Default path**: `./plans/reports/brainstormer-{YYMMDD}-{HHMM}-{slug}.md`
+* If `## Naming` section is injected by hooks, use that pattern instead.
 
 ## Output Requirements
 When brainstorming concludes with agreement, create a detailed markdown summary report including:
