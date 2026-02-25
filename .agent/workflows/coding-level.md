@@ -23,8 +23,32 @@ Set your coding experience level to receive tailored explanations and output for
 
 ## How It Works
 
-Set the level and the agent will adjust:
-- Explanation depth and complexity
-- Use of technical jargon
-- Focus areas (concepts vs trade-offs vs strategy)
-- Response structure and detail level
+1. Set `codingLevel` in `.agent/.agent.json`
+2. Guidelines are **automatically injected** on every session start
+3. No manual activation needed - it just works!
+
+## Example
+
+Set level 1 in `.agent/.agent.json`:
+```json
+{
+  "codingLevel": 1,
+  ...
+}
+```
+
+Next session, Antigravity agent will automatically:
+- Explain concepts and techniques clearly
+- Always explain WHY, not just HOW
+- Point out common mistakes
+- Add "Key Takeaways" after implementations
+
+## Optional: Manual Output Styles
+
+For finer control, you can also use `/output-style` with these styles:
+- `coding-level-0-eli5`
+- `coding-level-1-junior`
+- `coding-level-2-mid`
+- `coding-level-3-senior`
+- `coding-level-4-lead`
+- `coding-level-5-god`
