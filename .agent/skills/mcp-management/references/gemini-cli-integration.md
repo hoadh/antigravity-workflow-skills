@@ -2,7 +2,7 @@
 
 ## Model Configuration
 
-Read model from `.agent/.agent.json`: `gemini.model` (default: `gemini-3-flash-preview`)
+Read model from `.agents/.agent.json` (or `~/.gemini/antigravity/.agent.json`): `gemini.model` (default: `gemini-3-flash-preview`)
 
 ## ⚠️ CRITICAL: Use Stdin Piping, NOT -p Flag
 

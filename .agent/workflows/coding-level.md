@@ -23,13 +23,13 @@ Set your coding experience level to receive tailored explanations and output for
 
 ## How It Works
 
-1. Set `codingLevel` in `.agent/.agent.json`
+1. Set `codingLevel` in `.agents/.agent.json` (or `~/.gemini/antigravity/.agent.json`)
 2. Guidelines are **automatically injected** on every session start
 3. No manual activation needed - it just works!
 
 ## Example
 
-Set level 1 in `.agent/.agent.json`:
+Set level 1 in `.agents/.agent.json` (or `~/.gemini/antigravity/.agent.json`):
 ```json
 {
   "codingLevel": 1,
