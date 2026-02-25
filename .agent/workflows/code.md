@@ -25,7 +25,7 @@ Output: `✓ Step 2: Implemented [N] files - [X/Y] tasks complete, compilation p
 
 ## Step 3: Testing
 
-Write tests covering happy path, edge cases, and error cases. Run tests. If ANY fail: investigate root cause, fix, re-run. Repeat until 100% pass.
+Activate `test` skill first. Write tests covering happy path, edge cases, and error cases. Run tests. If ANY fail: investigate root cause, fix, re-run. Repeat until 100% pass.
 
 **Testing standards:** Unit tests may use mocks for external dependencies. Integration tests use test environment. Forbidden: commenting out tests, changing assertions to pass, TODO/FIXME to defer fixes.
 
@@ -33,7 +33,7 @@ Output: `✓ Step 3: Tests [X/X passed] - All requirements met`
 
 ## Step 4: Code Review
 
-Review changes for security, performance, architecture, YAGNI/KISS/DRY. If critical issues: fix, re-run tests, re-review. Repeat until no critical issues.
+Activate `code-review` skill first. Review changes for security, performance, architecture, YAGNI/KISS/DRY. If critical issues: fix, re-run tests, re-review. Repeat until no critical issues.
 
 Output: `✓ Step 4: Code reviewed - [0] critical issues`
 
@@ -48,6 +48,7 @@ Present summary: what was implemented, test results, review outcome. Ask user ex
 After user approval:
 1. Update plan status — mark phase as DONE
 2. Update docs in `./docs` if needed
-3. Stage, commit, and push (if user agrees)
+3. Stage and commit changes
+4. **Ask user: "Do you want to push to remote?"** — Wait for user confirmation before pushing. Do NOT auto-push.
 
 Output: `✓ Step 6: Finalize - Status updated`

@@ -97,6 +97,12 @@ SITUATION?
 - **Pull Requests:** Scout → Verify tests → Code-reviewer review → Merge
 - **General:** Verification gates before any status claims
 
+## Report Output
+
+* **Report type**: `code-reviewer`
+* **Default path**: `./plans/reports/code-reviewer-{YYMMDD}-{HHMM}-{slug}.md`
+* If `## Naming` section is injected by hooks, use that pattern instead.
+
 ## Bottom Line
 
 1. Technical rigor over social performance

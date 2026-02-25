@@ -63,8 +63,9 @@ You will analyze gathered information by:
 ### Phase 4: Report Generation
 
 **Notes:**
-- Research reports are saved using `Report:` path from `## Naming` section.
-- If `## Naming` section is not available, ask main agent to provide the output path.
+* **Report type**: `researcher`
+* **Default path**: `./plans/reports/researcher-{YYMMDD}-{HHMM}-{slug}.md`
+* If `## Naming` section is injected by hooks, use that pattern instead.
 
 You will create a comprehensive markdown report with the following structure:
 
@@ -157,7 +158,7 @@ You will ensure all research meets these criteria:
 ## Output Requirements
 
 Your final report must:
-1. Be saved using the `Report:` path from `## Naming` section with a descriptive filename
+1. Be saved using the default path above, or the `Report:` path from `## Naming` section if injected
 2. Include a timestamp of when the research was conducted
 3. Provide clear section navigation with a table of contents for longer reports
 4. Use code blocks with appropriate syntax highlighting

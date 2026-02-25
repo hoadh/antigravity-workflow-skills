@@ -28,10 +28,24 @@ All reports **MUST** be saved as Markdown files following this naming convention
 
 | Token | Value | Example |
 |---|---|---|
-| `{type}` | Report category | `researcher`, `scout`, `debugger`, `tester`, `code-reviewer`, `brainstormer`, `cook` |
+| `{type}` | Report category | See mapping table below |
 | `{YYMMDD}` | Current date | `260225` |
 | `{HHMM}` | Current time | `1430` |
 | `{slug}` | Kebab-case task description | `fix-auth-token-expiry` |
+
+#### Skill → Report Type Mapping
+
+| Report Type | Skill | When to use |
+|---|---|---|
+| `researcher` | research | Technical research, solution analysis |
+| `scout` | scout | Codebase scouting, file discovery |
+| `debugger` | debug / debugging | Bug investigation, root cause analysis |
+| `tester` | test | Test execution, QA reports |
+| `code-reviewer` | code-review | Code review, codebase audit |
+| `brainstormer` | brainstorm | Brainstorm, ideation, architecture decisions |
+| `cook` | cook | Implementation progress reports |
+
+> **Fallback rule:** Each skill defines its own `## Report Output` section with default path. If `## Naming` is injected by hooks, use that pattern instead.
 
 **Plan directory structure:**
 ```
@@ -46,7 +60,7 @@ plans/{YYMMDD}-{HHMM}-{slug}/
 * Always create `./plans/reports/` directory if it doesn't exist
 * Research reports must be ≤150 lines
 * `plan.md` must include YAML frontmatter: title, description, status, priority, effort, branch, tags, created
-* Each workflow's `## Report Output` section specifies which report types to generate
+* The `## Report Output` section in each skill and workflow specifies which report types to generate
 
 ## [IMPORTANT] Consider Modularization
 

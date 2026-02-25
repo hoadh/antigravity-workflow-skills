@@ -72,6 +72,12 @@ Bug → systematic-debugging.md (Phase 1-4)
   About to claim success? → verification.md (verify first)
 ```
 
+## Report Output
+
+* **Report type**: `debugger`
+* **Default path**: `./plans/reports/debugger-{YYMMDD}-{HHMM}-{slug}.md`
+* If `## Naming` section is injected by hooks, use that pattern instead.
+
 ## Red Flags
 
 Stop and follow process if thinking:
