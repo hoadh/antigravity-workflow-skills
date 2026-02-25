@@ -42,20 +42,13 @@ Check the `## Plan Context` section injected by hooks:
 - **"Plan: none"** = No active plan
 
 **Pre-Creation Check:**
-1. If "Plan:" shows a path → ask "Continue with existing plan? [Y/n]"
-2. If "Suggested:" shows a path → inform user (hint only, do NOT auto-use)
-3. If "Plan: none" → create new plan using naming from `## Naming` section
-
-**After Creating Plan:**
-```bash
-# Update session state so subagents get the new plan context:
-node .agent/scripts/set-active-plan.cjs {plan-dir}
-```
+1. If active plan exists in `./plans/` → ask "Continue with existing plan? [Y/n]"
+2. If no active plan → create new plan using `plans/{YYMMDD}-{HHMM}-{slug}/` naming
+3. Remember the plan directory path and use it for all reports in this session
 
 **Report Output Rules:**
-1. Use `Report:` and `Plan dir:` from `## Naming` section
-2. Active plans use plan-specific reports path
-3. Suggested plans use default reports path to prevent old plan pollution
+* Reports: `./plans/reports/{type}-{YYMMDD}-{HHMM}-{slug}.md`
+* Plan-specific reports: `{plan-dir}/reports/`
 
 ## File Structure
 

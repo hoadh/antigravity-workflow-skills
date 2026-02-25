@@ -58,67 +58,43 @@ Load: `references/output-standards.md`
 - Provide multiple options with trade-offs when appropriate
 - Fully respect the `./docs/development-rules.md` file.
 
-## Task Integration (Optional)
-
-When session has `CLAUDE_CODE_TASK_LIST_ID` set (active plan):
-- Use TaskCreate to create tasks for each phase with clear subjects
-- Set dependencies: Phase N+1 `blockedBy` Phase N
-- Subagents coordinate via shared task list automatically
-- Use TaskUpdate to mark progress (in_progress → completed)
-
 ### Important
 DO NOT create plans or reports in USER directory.
 ALWAYS create plans or reports in CURRENT WORKING PROJECT DIRECTORY.
 
-**Plan Directory Structure**
-IN CURRENT WORKING PROJECT DIRECTORY:
+**Plan Directory Structure:**
 ```
-plans/
-└── {date}-plan-name/
-    ├── research/
-    │   ├── researcher-XX-report.md
-    │   └── ...
-    ├── reports/
-    │   ├── XX-report.md
-    │   └── ...
-    ├── scout/
-    │   ├── scout-XX-report.md
-    │   └── ...
-    ├── plan.md
-    ├── phase-XX-phase-name-here.md
-    └── ...
+plans/{YYMMDD}-{HHMM}-{slug}/
+├── research/
+│   ├── researcher-XX-{topic}.md    # ≤150 lines each
+│   └── ...
+├── reports/
+│   ├── scout-{slug}.md
+│   └── ...
+├── plan.md                          # Overview (under 80 lines, YAML frontmatter)
+├── phase-XX-{name}.md
+└── ...
 ```
 
 ## Active Plan State
 
-Prevents version proliferation by tracking current working plan via session state.
-
-### Active vs Suggested Plans
-
-Check the `## Plan Context` section injected by hooks:
-- **"Plan: {path}"** = Active plan, explicitly set via `set-active-plan.cjs` - use for reports
-- **"Suggested: {path}"** = Branch-matched, hint only - do NOT auto-use
-- **"Plan: none"** = No active plan
+Prevents version proliferation by tracking current working plan within a session.
 
 ### Rules
 
-1. **If "Plan:" shows a path**: Ask "Continue with existing plan? [Y/n]"
-2. **If "Suggested:" shows a path**: Inform user, ask if they want to activate or create new
-3. **If "Plan: none"**: Create new plan using naming from `## Naming` section
-4. **Update on create**: Run `node .agent/scripts/set-active-plan.cjs {plan-dir}`
+1. **If active plan exists** in `./plans/`: Ask "Continue with existing plan? [Y/n]"
+2. **If no active plan**: Create new plan using `plans/{YYMMDD}-{HHMM}-{slug}/` naming
+3. Remember the plan directory path and use it for all reports in this session
 
 ### Report Output Location
 
-All agents writing reports MUST:
-1. Check `## Naming` section injected by hooks for the computed naming pattern
-2. Active plans use plan-specific reports path
-3. Suggested plans use default reports path (not plan folder)
+All reports MUST follow the naming convention from `## Report Output Convention` in project rules:
+* Reports: `./plans/reports/{type}-{YYMMDD}-{HHMM}-{slug}.md`
+* Plan-specific reports: `{plan-dir}/reports/`
 
 ### Important
 DO NOT create plans or reports in USER directory.
 ALWAYS create plans or reports in CURRENT WORKING PROJECT DIRECTORY.
-
-**Important:** Suggested plans do NOT get plan-specific reports - this prevents pollution of old plan folders.
 
 ## Quality Standards
 
