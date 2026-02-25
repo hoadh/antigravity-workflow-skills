@@ -44,6 +44,12 @@ if [ "$scope_choice" == "1" ]; then
         cp "$REPO_ROOT/.agent/.agent.json" ~/.gemini/antigravity/
     fi
     
+    echo "Copying output styles..."
+    if [ -d "$REPO_ROOT/.agent/output-styles" ]; then
+        rm -rf ~/.gemini/antigravity/output-styles
+        cp -r "$REPO_ROOT/.agent/output-styles" ~/.gemini/antigravity/output-styles
+    fi
+    
     echo "Installing global skills dependencies..."
     if [ -f ~/.gemini/antigravity/skills/install.sh ]; then
         cd ~/.gemini/antigravity/skills
@@ -93,6 +99,12 @@ elif [ "$scope_choice" == "2" ]; then
     echo "Copying .agent.json configuration..."
     if [ -f "$REPO_ROOT/.agent/.agent.json" ]; then
         cp "$REPO_ROOT/.agent/.agent.json" "$ABS_TARGET_DIR/.agents/"
+    fi
+    
+    echo "Copying output styles..."
+    if [ -d "$REPO_ROOT/.agent/output-styles" ]; then
+        rm -rf "$ABS_TARGET_DIR/.agents/output-styles"
+        cp -r "$REPO_ROOT/.agent/output-styles" "$ABS_TARGET_DIR/.agents/"
     fi
     
     echo "Copying plan templates..."
