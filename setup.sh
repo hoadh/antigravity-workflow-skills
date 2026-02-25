@@ -37,6 +37,13 @@ if [ "$scope_choice" == "1" ]; then
     echo "Copying GEMINI.md global rules..."
     cp "$REPO_ROOT/.agent/GEMINI.md" ~/.gemini/
     
+    echo "Copying .agent.json configuration..."
+    if [ -f "$REPO_ROOT/.agent/.agent.json" ]; then
+        # Ensure the directory exists
+        mkdir -p ~/.gemini/antigravity
+        cp "$REPO_ROOT/.agent/.agent.json" ~/.gemini/antigravity/
+    fi
+    
     echo "Installing global skills dependencies..."
     if [ -f ~/.gemini/antigravity/skills/install.sh ]; then
         cd ~/.gemini/antigravity/skills
@@ -82,6 +89,11 @@ elif [ "$scope_choice" == "2" ]; then
     echo "Copying workflows..."
     rm -rf "$ABS_TARGET_DIR/.agents/workflows"
     cp -r "$REPO_ROOT/.agent/workflows" "$ABS_TARGET_DIR/.agents/workflows"
+    
+    echo "Copying .agent.json configuration..."
+    if [ -f "$REPO_ROOT/.agent/.agent.json" ]; then
+        cp "$REPO_ROOT/.agent/.agent.json" "$ABS_TARGET_DIR/.agents/"
+    fi
     
     echo "Copying plan templates..."
     if [ -d "$REPO_ROOT/plans" ]; then
