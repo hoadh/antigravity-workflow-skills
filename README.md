@@ -8,6 +8,18 @@ Tài liệu này hướng dẫn cách cài đặt các kỹ năng (Skills), thi�
 
 **Quick start:**
 
+We have provided an automated installation script that can set up either the Global or Project scope for you:
+
+```bash
+# 1. Give execution permission to the script
+chmod +x setup.sh
+
+# 2. Run the interactive installer
+./setup.sh
+```
+
+Alternatively, you can manually copy the files as described below:
+
 ```bash
 # Global Rules, Skills và Workflows
 cp -r .agent/skills ~/.gemini/antigravity/skills
