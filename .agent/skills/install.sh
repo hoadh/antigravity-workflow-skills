@@ -323,7 +323,7 @@ try_pip_install() {
     local package_name="${package_spec%%[=<>]*}"  # Strip version specifier
 
     # Phase 1: Try with prefer-binary (wheels first)
-    if pip install "$package_spec" --prefer-binary 2>&1 | tee -a "$log_file"; then
+    if "$VENV_PYTHON" -m pip install "$package_spec" --prefer-binary 2>&1 | tee -a "$log_file"; then
         return 0
     fi
 
@@ -356,7 +356,7 @@ try_pip_install() {
 
     # Phase 3: Try source build
     print_info "Trying source build for $package_name..."
-    if pip install "$package_spec" --no-binary "$package_name" 2>&1 | tee -a "$log_file"; then
+    if "$VENV_PYTHON" -m pip install "$package_spec" --no-binary "$package_name" 2>&1 | tee -a "$log_file"; then
         print_success "$package_name installed (source build)"
         return 0
     fi
@@ -683,15 +683,43 @@ setup_python_env() {
     local failed_skills=()
 
     # Check Python
-    if command_exists python3; then
-        PYTHON_VERSION=$(python3 --version)
-        PYTHON_PATH=$(which python3)
-        print_success "Python3 found ($PYTHON_VERSION)"
+    PYTHON_PATH=""
+    
+    # Helper to check if a command is a valid Python 3 installation
+    # On Windows, `python` or `python3` may be a store shim that exits with 9009
+    # or prints "Python was not found" instead of actually running Python.
+    is_valid_python3() {
+        local py_cmd="$1"
+        if ! command_exists "$py_cmd"; then
+            return 1
+        fi
+        
+        local py_ver
+        # Bulletproof check: evaluate a python script
+        py_ver=$("$py_cmd" -c "import sys; print('{}.{}'.format(sys.version_info.major, sys.version_info.minor))" 2>/dev/null)
+        if [[ $? -eq 0 && "$py_ver" =~ ^3\. ]]; then
+            return 0
+        fi
+        return 1
+    }
+
+    if is_valid_python3 "python3"; then
+        PYTHON_PATH=$(command -v python3)
+    elif is_valid_python3 "python"; then
+        PYTHON_PATH=$(command -v python)
+    elif is_valid_python3 "py"; then
+        # Windows py launcher
+        PYTHON_PATH="py"
+    fi
+
+    if [[ -n "$PYTHON_PATH" ]]; then
+        PYTHON_VERSION=$("$PYTHON_PATH" --version 2>&1)
+        print_success "Python 3.x found ($PYTHON_VERSION) at $PYTHON_PATH"
 
         # Check for broken UV Python installation
         if [[ "$PYTHON_PATH" == *"/.local/share/uv/"* ]]; then
             # Verify UV Python works by testing venv creation
-            if ! python3 -c "import sys; sys.exit(0 if '/install' not in sys.base_prefix else 1)" 2>/dev/null; then
+            if ! "$PYTHON_PATH" -c "import sys; sys.exit(0 if '/install' not in sys.base_prefix else 1)" 2>/dev/null; then
                 print_error "UV Python installation is broken (corrupted sys.base_prefix)"
                 print_info "Please reinstall Python using Homebrew:"
                 print_info "  brew install python@3.12"
@@ -703,23 +731,29 @@ setup_python_env() {
             fi
         fi
     else
-        print_error "Python3 not found. Please install Python 3.7+"
+        print_error "Python 3.x not found. Please install Python 3.7+ or check your PATH."
+        print_info "If you are on Windows, ensure the Microsoft Store alias is disabled in 'App execution aliases'."
         exit 1
     fi
 
     # Create virtual environment (or recreate if corrupted)
     create_venv() {
         # Try normal venv creation first
-        if python3 -m venv "$VENV_DIR" 2>/dev/null; then
+        if "$PYTHON_PATH" -m venv "$VENV_DIR" 2>/dev/null; then
             return 0
         fi
 
         # If ensurepip fails (common on macOS), create without pip and bootstrap manually
         print_warning "Standard venv creation failed, trying without ensurepip..."
-        if python3 -m venv --without-pip "$VENV_DIR"; then
+        if "$PYTHON_PATH" -m venv --without-pip "$VENV_DIR"; then
             # Bootstrap pip manually with error handling
-            source "$VENV_DIR/bin/activate"
-            if ! curl -sS https://bootstrap.pypa.io/get-pip.py | python3; then
+            if [ -f "$VENV_DIR/Scripts/activate" ]; then
+                source "$VENV_DIR/Scripts/activate"
+            else
+                source "$VENV_DIR/bin/activate"
+            fi
+            
+            if ! curl -sS https://bootstrap.pypa.io/get-pip.py | "$PYTHON_PATH"; then
                 print_error "Failed to bootstrap pip (network issue or get-pip.py failed)"
                 deactivate
                 rm -rf "$VENV_DIR"
@@ -734,7 +768,7 @@ setup_python_env() {
 
     if [ -d "$VENV_DIR" ]; then
         # Verify venv is valid by checking for activate script AND python executable
-        if [ -f "$VENV_DIR/bin/activate" ] && [ -x "$VENV_DIR/bin/python3" ]; then
+        if { [ -f "$VENV_DIR/bin/activate" ] && [ -x "$VENV_DIR/bin/python3" ]; } || { [ -f "$VENV_DIR/Scripts/activate" ] && { [ -x "$VENV_DIR/Scripts/python.exe" ] || [ -x "$VENV_DIR/Scripts/python3.exe" ]; }; }; then
             print_success "Virtual environment already exists at $VENV_DIR"
         else
             print_warning "Virtual environment is corrupted (missing activate or python3). Recreating..."
@@ -758,7 +792,18 @@ setup_python_env() {
 
     # Activate and install packages
     print_info "Activating virtual environment..."
-    source "$VENV_DIR/bin/activate"
+    VENV_PYTHON=""
+    if [ -f "$VENV_DIR/Scripts/activate" ]; then
+        source "$VENV_DIR/Scripts/activate"
+        VENV_PYTHON="$VENV_DIR/Scripts/python"
+    else
+        source "$VENV_DIR/bin/activate"
+        if [ -x "$VENV_DIR/bin/python3" ]; then
+            VENV_PYTHON="$VENV_DIR/bin/python3"
+        else
+            VENV_PYTHON="$VENV_DIR/bin/python"
+        fi
+    fi
 
     # Create log directory
     local LOG_DIR="$VENV_DIR/logs"
@@ -766,7 +811,7 @@ setup_python_env() {
 
     # Upgrade pip with logging (use --prefer-binary)
     print_info "Upgrading pip..."
-    if pip install --upgrade pip --prefer-binary 2>&1 | tee "$LOG_DIR/pip-upgrade.log" | tail -n 3; then
+    if "$VENV_PYTHON" -m pip install --upgrade pip --prefer-binary 2>&1 | tee "$LOG_DIR/pip-upgrade.log" | tail -n 3; then
         print_success "pip upgraded successfully"
     else
         print_warning "pip upgrade failed (continuing anyway)"
@@ -830,7 +875,7 @@ setup_python_env() {
 
                 print_info "Installing $skill_name test dependencies..."
 
-                if pip install -r "$skill_dir/scripts/tests/requirements.txt" --prefer-binary 2>&1 | tee "$SKILL_TEST_LOG"; then
+                if "$VENV_PYTHON" -m pip install -r "$skill_dir/scripts/tests/requirements.txt" --prefer-binary 2>&1 | tee "$SKILL_TEST_LOG"; then
                     print_success "$skill_name test dependencies installed successfully"
                 else
                     print_warning "$skill_name test dependencies failed to install"
@@ -887,7 +932,9 @@ setup_python_env() {
         print_success "All Python dependencies installed successfully"
     fi
 
-    deactivate
+    if [ "$(type -t deactivate)" = 'function' ]; then
+        deactivate
+    fi
 }
 
 # Verify installations
@@ -938,13 +985,21 @@ verify_installations() {
 
     # Check Python packages
     if [ -d "$VENV_DIR" ]; then
-        source "$VENV_DIR/bin/activate"
-        if python -c "import google.genai" 2>/dev/null; then
+        if [ -f "$VENV_DIR/Scripts/activate" ]; then
+            source "$VENV_DIR/Scripts/activate"
+        else
+            source "$VENV_DIR/bin/activate"
+        fi
+        
+        if "$PYTHON_PATH" -c "import google.genai" 2>/dev/null; then
             print_success "google-genai Python package is available"
         else
             print_warning "google-genai Python package is not available"
         fi
-        deactivate
+        
+        if [ "$(type -t deactivate)" = 'function' ]; then
+            deactivate
+        fi
     fi
 }
 
@@ -1066,7 +1121,7 @@ generate_remediation_commands() {
             if [[ "$pkg" == *":"* ]]; then
                 pkg="${pkg#*:}"
             fi
-            echo "pip install $pkg"
+            echo "\"\$VENV_PYTHON\" -m pip install $pkg"
         done
         echo ""
     fi
@@ -1217,7 +1272,7 @@ write_error_summary() {
   "remediation": {
     "sudo_packages": "$sudo_pkg_cmd",
     "build_tools": "$build_tools_cmd",
-    "pip_retry": "source $VENV_DIR/bin/activate && pip install <package>"
+    "pip_retry": "\"\$VENV_PYTHON\" -m pip install <package>"
   }
 }
 EOF
@@ -1228,7 +1283,8 @@ EOF
 # Print usage instructions (now just brief tips)
 print_usage() {
     echo -e "${GREEN}To use the Python virtual environment:${NC}"
-    echo -e "  source .agent/skills/.venv/bin/activate"
+    echo -e "  source .agent/skills/.venv/Scripts/activate (Windows)"
+    echo -e "  source .agent/skills/.venv/bin/activate (macOS/Linux)"
     echo ""
     echo -e "${BLUE}For more information, see:${NC}"
     echo -e "  .agent/README.md"
