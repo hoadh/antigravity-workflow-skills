@@ -21,17 +21,21 @@ chmod +x setup.sh
 Hoặc, có thể sao chép thủ công các file như hướng dẫn bên dưới:
 
 ```bash
-# Global Rules, Skills và Workflows
+# ── Global Scope ──
 cp -r .agent/skills ~/.gemini/antigravity/skills
 cp -r .agent/workflows ~/.gemini/antigravity/global_workflows
-cp -r .agent/GEMINI.md ~/.gemini/
+cp .agent/GEMINI.md ~/.gemini/
+cp .agent/.agent.json ~/.gemini/antigravity/
+cp -r .agent/output-styles ~/.gemini/antigravity/output-styles
+cp -r .agent/schemas ~/.gemini/antigravity/schemas
 
-# Project Rules, Skills và Workflows
-cp -r .agent/rules/*.md your-project/.agents/rules
+# ── Project Scope ──
+cp -r .agent/rules/*.md your-project/.agents/rules/
 cp -r .agent/skills your-project/.agents/skills
 cp -r .agent/workflows your-project/.agents/workflows
-
-# Copy các file template cho plans
+cp .agent/.agent.json your-project/.agents/
+cp -r .agent/output-styles your-project/.agents/output-styles
+cp -r .agent/schemas your-project/.agents/schemas
 cp -r ./plans your-project/
 ```
 
@@ -55,7 +59,7 @@ chmod +x ./install.sh
 
 #### 2.1 Thiết lập Rules (Quy tắc cho Agent)
 
-Rules giúp định hướng hành vi của tác tử AI. Có hai cấp độ cấu hình quy tắc: toàn cục (Global) và theo từng dự án (Workspace). 
+Rules giúp định hướng hành vi của AI Agent. Có hai cấp độ cấu hình quy tắc: toàn cục (Global) và theo từng dự án (Workspace). 
 
 Bạn hãy copy các file `.md` trong thư mục `rules` của kho lưu trữ này và đặt vào đúng vị trí tương ứng:
 

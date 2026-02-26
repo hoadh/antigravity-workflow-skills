@@ -123,6 +123,7 @@ if [ "$scope_choice" == "1" ]; then
     [ -f ~/.gemini/GEMINI.md ] && backup_sources+=(~/.gemini/GEMINI.md)
     [ -f "$GLOBAL_INSTALL_BASE/.agent.json" ] && backup_sources+=("$GLOBAL_INSTALL_BASE/.agent.json")
     [ -d "$GLOBAL_INSTALL_BASE/output-styles" ] && backup_sources+=("$GLOBAL_INSTALL_BASE/output-styles")
+    [ -d "$GLOBAL_INSTALL_BASE/schemas" ] && backup_sources+=("$GLOBAL_INSTALL_BASE/schemas")
 
     if [ ${#backup_sources[@]} -gt 0 ]; then
         echo "Creating backup of existing content (skills, workflows, GEMINI.md, etc.)..."
@@ -153,6 +154,11 @@ if [ "$scope_choice" == "1" ]; then
     echo "Syncing output styles..."
     if [ -d "$REPO_ROOT/.agent/output-styles" ]; then
         safe_sync_dir "$REPO_ROOT/.agent/output-styles" "$GLOBAL_INSTALL_BASE/output-styles" "output-styles"
+    fi
+
+    echo "Syncing schemas..."
+    if [ -d "$REPO_ROOT/.agent/schemas" ]; then
+        safe_sync_dir "$REPO_ROOT/.agent/schemas" "$GLOBAL_INSTALL_BASE/schemas" "schemas"
     fi
     echo "Installing global skills dependencies..."
     if [ -f "$GLOBAL_INSTALL_BASE/skills/install.sh" ]; then
@@ -201,6 +207,7 @@ elif [ "$scope_choice" == "2" ]; then
     [ -d "$PROJECT_INSTALL_BASE/workflows" ] && backup_sources+=("$PROJECT_INSTALL_BASE/workflows")
     [ -f "$PROJECT_INSTALL_BASE/.agent.json" ] && backup_sources+=("$PROJECT_INSTALL_BASE/.agent.json")
     [ -d "$PROJECT_INSTALL_BASE/output-styles" ] && backup_sources+=("$PROJECT_INSTALL_BASE/output-styles")
+    [ -d "$PROJECT_INSTALL_BASE/schemas" ] && backup_sources+=("$PROJECT_INSTALL_BASE/schemas")
 
     if [ ${#backup_sources[@]} -gt 0 ]; then
         echo "Creating backup of existing content..."
@@ -222,6 +229,11 @@ elif [ "$scope_choice" == "2" ]; then
     echo "Syncing output styles..."
     if [ -d "$REPO_ROOT/.agent/output-styles" ]; then
         safe_sync_dir "$REPO_ROOT/.agent/output-styles" "$PROJECT_INSTALL_BASE/output-styles" "output-styles"
+    fi
+
+    echo "Syncing schemas..."
+    if [ -d "$REPO_ROOT/.agent/schemas" ]; then
+        safe_sync_dir "$REPO_ROOT/.agent/schemas" "$PROJECT_INSTALL_BASE/schemas" "schemas"
     fi
     echo "Copying plan templates..."
     if [ -d "$REPO_ROOT/plans" ]; then
