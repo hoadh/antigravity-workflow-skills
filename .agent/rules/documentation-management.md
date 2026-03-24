@@ -1,31 +1,31 @@
+---
+trigger: always_on
+---
+
 # Project Documentation Management
 
-## Roadmap & Changelog Maintenance
+### Roadmap & Changelog Maintenance
+- **Project Roadmap** (`./docs/development-roadmap.md`): Living document tracking project phases, milestones, and progress
+- **Project Changelog** (`./docs/project-changelog.md`): Detailed record of all significant changes, features, and fixes
+- **System Architecture** (`./docs/system-architecture.md`): Detailed record of all significant changes, features, and fixes
+- **Code Standards** (`./docs/code-standards.md`): Detailed record of all significant changes, features, and fixes
 
-* **Project Roadmap** (`./docs/development-roadmap.md`): Living document tracking project phases, milestones, and progress
-* **Project Changelog** (`./docs/project-changelog.md`): Detailed record of all significant changes, features, and fixes
-* **System Architecture** (`./docs/system-architecture.md`): Technical architecture documentation
-* **Code Standards** (`./docs/code-standards.md`): Coding standards and conventions
+### Automatic Updates Required
+- **After Feature Implementation**: Update roadmap progress status and changelog entries
+- **After Major Milestones**: Review and adjust roadmap phases, update success metrics
+- **After Bug Fixes**: Document fixes in changelog with severity and impact
+- **After Security Updates**: Record security improvements and version updates
+- **Weekly Reviews**: Update progress percentages and milestone statuses
 
-## Automatic Updates Required
+### Documentation Triggers
+The `project-manager` agent MUST update these documents when:
+- A development phase status changes (e.g., from "In Progress" to "Complete")
+- Major features are implemented or released
+- Significant bugs are resolved or security patches applied
+- Project timeline or scope adjustments are made
+- External dependencies or breaking changes occur
 
-* **After Feature Implementation**: Update roadmap progress status and changelog entries
-* **After Major Milestones**: Review and adjust roadmap phases, update success metrics
-* **After Bug Fixes**: Document fixes in changelog with severity and impact
-* **After Security Updates**: Record security improvements and version updates
-* **Weekly Reviews**: Update progress percentages and milestone statuses
-
-## Documentation Triggers
-
-Update these documents when:
-* A development phase status changes (e.g., from "In Progress" to "Complete")
-* Major features are implemented or released
-* Significant bugs are resolved or security patches applied
-* Project timeline or scope adjustments are made
-* External dependencies or breaking changes occur
-
-## Update Protocol
-
+### Update Protocol
 1. **Before Updates**: Always read current roadmap and changelog status
 2. **During Updates**: Maintain version consistency and proper formatting
 3. **After Updates**: Verify links, dates, and cross-references are accurate
@@ -65,12 +65,14 @@ Rules:
 * `plan.md` must include YAML frontmatter: title, description, status, priority, effort, branch, tags, created
 * Each skill's `## Report Output` section specifies its report type and default path
 
-## Plans
+### Plans
 
 ### Plan Location
 Save plans in `./plans` directory: `plans/{YYMMDD}-{HHMM}-{slug}/`
 
-### File Organization
+**Example:** `plans/251101-1505-authentication-and-profile-implementation/`
+
+#### File Organization
 
 ```
 plans/{YYMMDD}-{HHMM}-{slug}/
@@ -86,24 +88,63 @@ plans/{YYMMDD}-{HHMM}-{slug}/
 └── ...
 ```
 
-### Overview Plan (plan.md)
-* Keep generic and under 80 lines
-* List each phase with status/progress
-* Link to detailed phase files
-* Key dependencies
+#### File Structure
 
-### Phase Files (phase-XX-name.md)
-Follow the `./docs/development-rules.md` file. Each phase file should contain:
+##### Overview Plan (plan.md)
+- Keep generic and under 80 lines
+- List each phase with status/progress
+- Link to detailed phase files
+- Key dependencies
 
-* **Context Links** — Links to related reports, files, documentation
-* **Overview** — Priority, current status, brief description
-* **Key Insights** — Important findings from research, critical considerations
-* **Requirements** — Functional and non-functional requirements
-* **Architecture** — System design, component interactions, data flow
-* **Related Code Files** — Files to modify, create, delete
-* **Implementation Steps** — Detailed, numbered steps with specific instructions
-* **Todo List** — Checkbox list for tracking
-* **Success Criteria** — Definition of done, validation methods
-* **Risk Assessment** — Potential issues, mitigation strategies
-* **Security Considerations** — Auth/authorization, data protection
-* **Next Steps** — Dependencies, follow-up tasks
+##### Phase Files (phase-XX-name.md)
+Fully respect the `./docs/development-rules.md` file.
+Each phase file should contain:
+
+**Context Links**
+- Links to related reports, files, documentation
+
+**Overview**
+- Priority
+- Current status
+- Brief description
+
+**Key Insights**
+- Important findings from research
+- Critical considerations
+
+**Requirements**
+- Functional requirements
+- Non-functional requirements
+
+**Architecture**
+- System design
+- Component interactions
+- Data flow
+
+**Related Code Files**
+- List of files to modify
+- List of files to create
+- List of files to delete
+
+**Implementation Steps**
+- Detailed, numbered steps
+- Specific instructions
+
+**Todo List**
+- Checkbox list for tracking
+
+**Success Criteria**
+- Definition of done
+- Validation methods
+
+**Risk Assessment**
+- Potential issues
+- Mitigation strategies
+
+**Security Considerations**
+- Auth/authorization
+- Data protection
+
+**Next Steps**
+- Dependencies
+- Follow-up tasks
